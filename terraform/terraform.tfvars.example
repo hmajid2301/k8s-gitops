@@ -1,0 +1,5 @@
+# GitLab Configuration
+# Create a GitLab Personal Access Token with 'api', 'read_repository', and 'write_repository' scopes
+gitlab_token = "your-gitlab-token-here"
+gitlab_project = "your-username/your-repo-name"
+git_branch = "main"
