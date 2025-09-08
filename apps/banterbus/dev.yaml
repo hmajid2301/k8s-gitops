@@ -12,7 +12,6 @@ spec:
     kind: GitRepository
     name: banterbus-source
   targetNamespace: dev
-  validation: client
   healthChecks:
     - apiVersion: apps/v1
       kind: Deployment
