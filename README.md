@@ -1,14 +1,12 @@
-# K8s GitOps (Flux and OpenTofu)
+# K8s GitOps with Flux and OpenTofu
 
-This repository contains the GitOps configuration for Kubernetes clusters using Flux CD and OpenTofu for infrastructure provisioning.
+Simple GitOps setup following k3s-config patterns.
 
 ## Setup
 
 ```bash
 nix develop
-
 # or
-
 direnv allow
 ```
 
@@ -16,31 +14,31 @@ direnv allow
 cp terraform/terraform.tfvars.example terraform/terraform.tfvars
 ```
 
-```hcl
-gitlab_token = "your-gitlab-token-here"
-gitlab_project = "your-username/your-repo-name"
-git_branch = "main"
-```
-
-Go to GitLab → Settings → Access Tokens → Add new token
-
-Create a GitLab Personal Access Token with the following scopes:
-- `api` - Required for Flux to create deploy keys and access the GitLab API
-- `read_repository` - Required for reading repository content
-- `write_repository` - Required for image automation commits
-
+Edit with your GitLab token and project details.
 
 ```bash
 cd terraform
 tofu init
-tofu plan
 tofu apply
-
-
-flux check
 ```
 
-This will:
-- Bootstrap Flux on your Kubernetes cluster using GitLab token authentication
-- Configure Flux to sync from this repository with read/write access for image automation
-- Set up proper authentication for automated image updates
+## Structure
+
+```
+├── dev/                    # Dev namespace and apps
+├── prod/                   # Prod namespace and apps
+├── apps/                   # Shared apps namespace
+├── clusters/k8s-cluster/   # Flux bootstrap point
+└── terraform/              # Bootstrap configuration
+```
+
+## Adding Apps
+
+Just add manifests to the respective folders:
+- `dev/` for dev environment
+- `prod/` for production
+- `apps/` for shared applications
+
+Update the `kustomization.yaml` in each folder to include your new resources.
+
+Simple and clean - just like k3s-config!
