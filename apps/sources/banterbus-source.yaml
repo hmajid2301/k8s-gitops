@@ -1,0 +1,14 @@
+---
+apiVersion: source.toolkit.fluxcd.io/v1
+kind: GitRepository
+metadata:
+  name: banterbus-source
+  namespace: flux-system
+spec:
+  interval: 1m0s
+  url: https://gitlab.com/banterbus/banterbus.git
+  ref:
+    branch: main
+  ignore: |
+    /*
+    !/k8s/

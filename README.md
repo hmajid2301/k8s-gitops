@@ -25,20 +25,33 @@ tofu apply
 ## Structure
 
 ```
-├── dev/                    # Dev namespace and apps
-├── prod/                   # Prod namespace and apps
-├── apps/                   # Shared apps namespace
+├── dev/                    # Dev namespace
+├── prod/                   # Prod namespace
+├── apps/                   # Applications (repo-per-app pattern)
+│   ├── namespace.yaml      # Apps namespace
+│   ├── sources/            # Git sources for external repos
+│   └── banterbus/          # Banterbus app (points to banterbus/banterbus repo)
 ├── clusters/k8s-cluster/   # Flux bootstrap point
 └── terraform/              # Bootstrap configuration
 ```
 
-## Adding Apps
+## Repo-per-App Pattern
 
-Just add manifests to the respective folders:
-- `dev/` for dev environment
-- `prod/` for production
-- `apps/` for shared applications
+Applications are configured using the **repo-per-app** pattern:
 
-Update the `kustomization.yaml` in each folder to include your new resources.
+- **This repo**: Manages infrastructure (namespaces, policies) and app integration
+- **App repos**: Contain both source code and k8s configs (e.g., `banterbus/banterbus`)
 
-Simple and clean - just like k3s-config!
+### Example: Banterbus
+- **Source**: `gitlab.com/banterbus/banterbus`
+- **K8s Config**: `k8s/` directory in banterbus repo
+- **Deployments**:
+  - `k8s/dev/` → `dev` namespace
+  - `k8s/prod/` → `prod` namespace
+
+## Benefits
+
+- Apps own their deployment configs
+- Single source of truth per application
+- Independent development and deployment cycles
+- Clean separation of platform vs application concerns
