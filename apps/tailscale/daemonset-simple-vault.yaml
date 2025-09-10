@@ -29,10 +29,10 @@ spec:
         - -c
         - |
           set -e
-          
+
           # Get service account token
           SA_TOKEN=$(cat /var/run/secrets/kubernetes.io/serviceaccount/token)
-          
+
           # Authenticate with OpenBao
           echo "Authenticating with OpenBao..."
           VAULT_TOKEN=$(curl -sk -X POST \
@@ -40,23 +40,23 @@ spec:
             -d "{\"role\":\"tailscale\",\"jwt\":\"$SA_TOKEN\"}" \
             https://vault.homelab.haseebmajid.dev:8200/v1/auth/kubernetes/login | \
             grep -o '"client_token":"[^"]*"' | cut -d'"' -f4)
-          
+
           if [ -z "$VAULT_TOKEN" ]; then
             echo "Failed to get Vault token"
             exit 1
           fi
-          
+
           # Get Tailscale auth key
           echo "Fetching Tailscale auth key..."
           curl -sk -H "X-Vault-Token: $VAULT_TOKEN" \
             https://vault.homelab.haseebmajid.dev:8200/v1/kv/data/infra/tailscale | \
             grep -o '"AUTH_KEY":"[^"]*"' | cut -d'"' -f4 > /shared/authkey
-          
+
           if [ ! -s /shared/authkey ]; then
             echo "Failed to get Tailscale auth key"
             exit 1
           fi
-          
+
           echo "Successfully retrieved Tailscale auth key"
         volumeMounts:
         - name: shared-data
@@ -80,7 +80,7 @@ spec:
             echo "No auth key found"
             exit 1
           fi
-          
+
           export TS_AUTHKEY=$(cat /shared/authkey)
           echo "Starting Tailscale with auth key from OpenBao..."
           exec /usr/local/bin/containerboot

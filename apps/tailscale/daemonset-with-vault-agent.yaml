@@ -29,12 +29,12 @@ spec:
           # Get Kubernetes service account token
           export VAULT_ADDR="https://vault.homelab.haseebmajid.dev:8200"
           export SA_TOKEN=$(cat /var/run/secrets/kubernetes.io/serviceaccount/token)
-          
+
           # Authenticate with Vault using Kubernetes auth
           VAULT_TOKEN=$(vault write -field=token auth/kubernetes/login \
             role=tailscale \
             jwt=$SA_TOKEN)
-          
+
           # Fetch the Tailscale auth key
           vault kv get -field=AUTH_KEY kv/infra/tailscale > /shared/authkey
         env:

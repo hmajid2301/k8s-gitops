@@ -1,8 +1,8 @@
 ---
 # This is a reference file - apply this policy to your OpenBao server
-# 
+#
 # Policy name: tailscale
-# 
+#
 # bao policy write tailscale - <<EOF
 # path "kv/data/infra/tailscale" {
 #   capabilities = ["read"]

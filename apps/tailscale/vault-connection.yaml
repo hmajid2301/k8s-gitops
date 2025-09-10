@@ -7,8 +7,8 @@ metadata:
   namespace: tailscale
 spec:
   # Replace with your OpenBao server address
-  address: "https://vault.homelab.haseebmajid.dev:8200"
+  address: "https://openbao.homelab.haseebmajid.dev:8200"
   # Skip TLS verification if using self-signed certs
   skipTLSVerify: false
   # Optional: TLS server name
-  tlsServerName: "vault.homelab.haseebmajid.dev"
+  tlsServerName: "openbao.homelab.haseebmajid.dev"
