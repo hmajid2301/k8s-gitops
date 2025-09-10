@@ -10,8 +10,8 @@ resources:
   - clusterrole.yaml
   - clusterrolebinding.yaml
   # Choose one deployment method:
-  # - daemonset.yaml                    # Static secret approach
-  - daemonset-simple-vault.yaml        # OpenBao integration with curl
+  - daemonset-simple.yaml              # Static secret approach
+  # - daemonset-simple-vault.yaml        # OpenBao integration with curl
   # - daemonset-with-vault-agent.yaml  # Vault Agent approach
   # - secret-from-openbao.yaml         # Vault Secrets Operator approach
   # - vault-auth.yaml
