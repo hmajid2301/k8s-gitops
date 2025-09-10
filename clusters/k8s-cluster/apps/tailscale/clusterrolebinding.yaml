@@ -6,7 +6,7 @@ metadata:
   labels:
     app: tailscale
 subjects:
-- kind: ServiceAccount
+  - kind: ServiceAccount
   name: tailscale
   namespace: tailscale
 roleRef:
