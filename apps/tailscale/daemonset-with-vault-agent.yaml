@@ -1,0 +1,99 @@
+---
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: tailscale-with-vault
+  namespace: tailscale
+  labels:
+    app: tailscale
+spec:
+  selector:
+    matchLabels:
+      app: tailscale
+  template:
+    metadata:
+      labels:
+        app: tailscale
+    spec:
+      serviceAccountName: tailscale
+      hostNetwork: true
+      dnsPolicy: ClusterFirstWithHostNet
+      initContainers:
+      # Vault Agent to fetch secrets from OpenBao
+      - name: vault-agent
+        image: hashicorp/vault:1.17.2
+        command:
+        - /bin/sh
+        - -c
+        - |
+          # Get Kubernetes service account token
+          export VAULT_ADDR="https://vault.homelab.haseebmajid.dev:8200"
+          export SA_TOKEN=$(cat /var/run/secrets/kubernetes.io/serviceaccount/token)
+          
+          # Authenticate with Vault using Kubernetes auth
+          VAULT_TOKEN=$(vault write -field=token auth/kubernetes/login \
+            role=tailscale \
+            jwt=$SA_TOKEN)
+          
+          # Fetch the Tailscale auth key
+          vault kv get -field=AUTH_KEY kv/infra/tailscale > /shared/authkey
+        env:
+        - name: VAULT_SKIP_VERIFY
+          value: "true"
+        volumeMounts:
+        - name: shared-data
+          mountPath: /shared
+        resources:
+          requests:
+            cpu: 50m
+            memory: 64Mi
+          limits:
+            cpu: 200m
+            memory: 128Mi
+      containers:
+      - name: tailscale
+        image: tailscale/tailscale:v1.76.6
+        command:
+        - /bin/sh
+        - -c
+        - |
+          # Read auth key from shared volume
+          export TS_AUTHKEY=$(cat /shared/authkey)
+          exec /usr/local/bin/containerboot
+        env:
+        - name: TS_HOSTNAME
+          valueFrom:
+            fieldRef:
+              fieldPath: spec.nodeName
+        - name: TS_ROUTES
+          value: "10.42.0.0/16,10.43.0.0/16"
+        - name: TS_ACCEPT_DNS
+          value: "true"
+        - name: TS_EXTRA_ARGS
+          value: "--advertise-routes=$(TS_ROUTES) --accept-routes --hostname=$(TS_HOSTNAME)-k8s"
+        securityContext:
+          capabilities:
+            add:
+            - NET_ADMIN
+        resources:
+          requests:
+            cpu: 100m
+            memory: 128Mi
+          limits:
+            cpu: 500m
+            memory: 256Mi
+        volumeMounts:
+        - name: dev-net-tun
+          mountPath: /dev/net/tun
+        - name: shared-data
+          mountPath: /shared
+          readOnly: true
+      volumes:
+      - name: dev-net-tun
+        hostPath:
+          path: /dev/net/tun
+      - name: shared-data
+        emptyDir: {}
+      tolerations:
+      - operator: Exists
+        effect: NoSchedule

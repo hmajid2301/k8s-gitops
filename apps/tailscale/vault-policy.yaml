@@ -1,0 +1,17 @@
+---
+# This is a reference file - apply this policy to your OpenBao server
+# 
+# Policy name: tailscale
+# 
+# bao policy write tailscale - <<EOF
+# path "kv/data/infra/tailscale" {
+#   capabilities = ["read"]
+# }
+# EOF
+#
+# Create role in OpenBao:
+# bao write auth/kubernetes/role/tailscale \
+#   bound_service_account_names=tailscale \
+#   bound_service_account_namespaces=tailscale \
+#   policies=tailscale \
+#   ttl=1h

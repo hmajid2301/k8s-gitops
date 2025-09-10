@@ -6,11 +6,16 @@ metadata:
   namespace: tailscale
 resources:
   - namespace.yaml
-  - secret.yaml
   - serviceaccount.yaml
   - clusterrole.yaml
   - clusterrolebinding.yaml
-  - daemonset.yaml
+  # Choose one deployment method:
+  # - daemonset.yaml                    # Static secret approach
+  - daemonset-simple-vault.yaml        # OpenBao integration with curl
+  # - daemonset-with-vault-agent.yaml  # Vault Agent approach
+  # - secret-from-openbao.yaml         # Vault Secrets Operator approach
+  # - vault-auth.yaml
+  # - vault-connection.yaml
 commonLabels:
   app: tailscale
   managed-by: flux

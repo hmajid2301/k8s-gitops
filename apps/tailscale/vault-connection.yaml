@@ -1,0 +1,14 @@
+---
+# Vault Connection to OpenBao
+apiVersion: secrets.hashicorp.com/v1beta1
+kind: VaultConnection
+metadata:
+  name: vault-connection
+  namespace: tailscale
+spec:
+  # Replace with your OpenBao server address
+  address: "https://vault.homelab.haseebmajid.dev:8200"
+  # Skip TLS verification if using self-signed certs
+  skipTLSVerify: false
+  # Optional: TLS server name
+  tlsServerName: "vault.homelab.haseebmajid.dev"
