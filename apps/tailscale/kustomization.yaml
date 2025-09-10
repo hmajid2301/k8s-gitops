@@ -1,0 +1,16 @@
+---
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+metadata:
+  name: tailscale
+  namespace: tailscale
+resources:
+  - namespace.yaml
+  - secret.yaml
+  - serviceaccount.yaml
+  - clusterrole.yaml
+  - clusterrolebinding.yaml
+  - daemonset.yaml
+commonLabels:
+  app: tailscale
+  managed-by: flux

@@ -6,3 +6,4 @@ resources:
   - sources
   - banterbus
   - openbao
+  - tailscale

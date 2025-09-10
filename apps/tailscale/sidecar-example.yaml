@@ -1,0 +1,59 @@
+---
+# Example of how to add Tailscale sidecar to your application
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: my-app-with-tailscale
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: my-app
+  template:
+    metadata:
+      labels:
+        app: my-app
+    spec:
+      serviceAccountName: tailscale
+      containers:
+      # Your main application container
+      - name: my-app
+        image: my-app:latest
+        env:
+        - name: DATABASE_HOST
+          value: "postgres.homelab.haseebmajid.dev"
+        - name: REDIS_HOST
+          value: "redis.homelab.haseebmajid.dev"
+      # Tailscale sidecar container
+      - name: tailscale
+        image: tailscale/tailscale:v1.76.6
+        env:
+        - name: TS_AUTHKEY
+          valueFrom:
+            secretKeyRef:
+              name: tailscale-auth
+              key: TS_AUTHKEY
+        - name: TS_HOSTNAME
+          value: "my-app-pod"
+        - name: TS_ACCEPT_DNS
+          value: "true"
+        - name: TS_EXTRA_ARGS
+          value: "--accept-routes --hostname=$(TS_HOSTNAME)"
+        securityContext:
+          capabilities:
+            add:
+            - NET_ADMIN
+        resources:
+          requests:
+            cpu: 50m
+            memory: 64Mi
+          limits:
+            cpu: 200m
+            memory: 128Mi
+        volumeMounts:
+        - name: dev-net-tun
+          mountPath: /dev/net/tun
+      volumes:
+      - name: dev-net-tun
+        hostPath:
+          path: /dev/net/tun

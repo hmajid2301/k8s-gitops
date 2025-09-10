@@ -16,6 +16,9 @@ terraform.tfvars
 .terraform.tfstate.lock.info
 flux_ssh_key*
 
+# Secrets (use SOPS for production)
+apps/tailscale/secret.yaml
+
 # Nix
 result
 result-*
