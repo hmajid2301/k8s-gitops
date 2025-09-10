@@ -1,0 +1,14 @@
+---
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: vault-csi-provider
+  namespace: vault-csi-driver
+spec:
+  template:
+    spec:
+      containers:
+      - name: provider-vault-installer
+        env:
+        - name: VAULT_ADDR
+          value: "https://openbao.homelab.haseebmajid.dev"

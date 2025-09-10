@@ -1,0 +1,7 @@
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: vault-csi-driver
+  labels:
+    name: vault-csi-driver
