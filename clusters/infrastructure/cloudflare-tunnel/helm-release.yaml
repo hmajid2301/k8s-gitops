@@ -8,7 +8,7 @@ spec:
   interval: 30m
   chart:
     spec:
-      chart: cloudflare-tunnel
+      chart: cloudflare-tunnel-remote
       version: "*"
       sourceRef:
         kind: HelmRepository
@@ -19,30 +19,10 @@ spec:
     createNamespace: true
   valuesFrom:
     - kind: Secret
-      name: cloudflare-tunnel-credentials
-      valuesKey: account-id
-      targetPath: cloudflare.account
-    - kind: Secret
-      name: cloudflare-tunnel-credentials
-      valuesKey: tunnel-id
-      targetPath: cloudflare.tunnelId
-    - kind: Secret
-      name: cloudflare-tunnel-credentials
-      valuesKey: tunnel-secret
-      targetPath: cloudflare.secret
+      name: cloudflare-tunnel-token
+      valuesKey: token
+      targetPath: cloudflare.tunnel_token
   values:
-    cloudflare:
-      tunnelName: "k8s-homelab"
-      secretName: "cloudflare-tunnel-credentials"
-      ingress:
-        # Banterbus dev environment
-        - hostname: "banterbus-dev.haseebmajid.dev"
-          service: "http://banterbus.dev:80"
-        # Banterbus prod environment  
-        - hostname: "banterbus.haseebmajid.dev"
-          service: "http://banterbus.prod:80"
-        # Catch-all rule - must be last
-        - service: http_status:404
     replicaCount: 2
     resources:
       limits:
