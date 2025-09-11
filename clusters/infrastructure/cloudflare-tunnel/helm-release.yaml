@@ -8,7 +8,7 @@ spec:
   interval: 30m
   chart:
     spec:
-      chart: cloudflare-tunnel-remote
+      chart: cloudflare-tunnel
       version: "*"
       sourceRef:
         kind: HelmRepository
@@ -20,11 +20,24 @@ spec:
   valuesFrom:
     - kind: Secret
       name: cloudflare-tunnel-token
-      valuesKey: token
-      targetPath: cloudflare.tunnel_token
+      valuesKey: account-id
+      targetPath: cloudflare.account
+    - kind: Secret
+      name: cloudflare-tunnel-token
+      valuesKey: tunnel-id
+      targetPath: cloudflare.tunnelId
+    - kind: Secret
+      name: cloudflare-tunnel-token
+      valuesKey: tunnel-secret
+      targetPath: cloudflare.secret
   values:
-    # Remote-managed tunnel: "k8s"
-    # Configure ingress rules via Cloudflare dashboard
+    cloudflare:
+      # Kubernetes-managed tunnel configuration
+      tunnelName: "k8s"
+      secretName: "cloudflare-tunnel-token"
+      ingress:
+        # Default catch-all rule - returns 404 for all traffic
+        - service: http_status:404
     replicaCount: 2
     resources:
       limits:
