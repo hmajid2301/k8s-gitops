@@ -23,6 +23,8 @@ spec:
       valuesKey: token
       targetPath: cloudflare.tunnel_token
   values:
+    # Remote-managed tunnel: "k8s"
+    # Configure ingress rules via Cloudflare dashboard
     replicaCount: 2
     resources:
       limits:
