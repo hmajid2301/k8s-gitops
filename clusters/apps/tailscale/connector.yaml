@@ -1,0 +1,10 @@
+apiVersion: tailscale.com/v1alpha1
+kind: Connector
+metadata:
+  name: subnet-router
+spec:
+  subnetRouter:
+    advertiseRoutes:
+      - "10.42.0.0/16"
+      - "10.43.0.0/16"
+  hostname: "k8s-cluster-subnet-router"

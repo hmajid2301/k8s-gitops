@@ -47,5 +47,5 @@ provider "flux" {
 
 resource "flux_bootstrap_git" "this" {
   embedded_manifests = true
-  path               = "clusters/k8s-cluster"
+  path               = "clusters"
 }

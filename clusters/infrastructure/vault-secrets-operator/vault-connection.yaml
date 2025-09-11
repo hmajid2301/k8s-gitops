@@ -1,0 +1,43 @@
+apiVersion: secrets.hashicorp.com/v1beta1
+kind: VaultConnection
+metadata:
+  name: openbao
+  namespace: dev
+spec:
+  address: "https://openbao.homelab.haseebmajid.dev"
+  skipTLSVerify: true
+---
+apiVersion: secrets.hashicorp.com/v1beta1
+kind: VaultAuth
+metadata:
+  name: openbao
+  namespace: dev
+spec:
+  method: kubernetes
+  mount: kubernetes
+  kubernetes:
+    role: k8s-auth-role
+    serviceAccount: default
+  vaultConnectionRef: dev/openbao
+---
+apiVersion: secrets.hashicorp.com/v1beta1
+kind: VaultConnection
+metadata:
+  name: openbao
+  namespace: prod
+spec:
+  address: "https://openbao.homelab.haseebmajid.dev"
+  skipTLSVerify: true
+---
+apiVersion: secrets.hashicorp.com/v1beta1
+kind: VaultAuth
+metadata:
+  name: openbao
+  namespace: prod
+spec:
+  method: kubernetes
+  mount: kubernetes
+  kubernetes:
+    role: k8s-auth-role
+    serviceAccount: default
+  vaultConnectionRef: prod/openbao

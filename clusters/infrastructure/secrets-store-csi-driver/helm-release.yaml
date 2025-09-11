@@ -1,0 +1,28 @@
+apiVersion: source.toolkit.fluxcd.io/v1beta2
+kind: HelmRepository
+metadata:
+  name: secrets-store-csi-driver
+  namespace: kube-system
+spec:
+  interval: 1h
+  url: https://kubernetes-sigs.github.io/secrets-store-csi-driver/charts
+---
+apiVersion: helm.toolkit.fluxcd.io/v2beta1
+kind: HelmRelease
+metadata:
+  name: secrets-store-csi-driver
+  namespace: kube-system
+spec:
+  interval: 1h
+  chart:
+    spec:
+      chart: secrets-store-csi-driver
+      sourceRef:
+        kind: HelmRepository
+        name: secrets-store-csi-driver
+        namespace: kube-system
+      version: "*"
+  values:
+    syncSecret:
+      enabled: true
+    enableSecretRotation: true

@@ -14,4 +14,3 @@ variable "git_branch" {
   type        = string
   default     = "main"
 }
-

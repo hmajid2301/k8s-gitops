@@ -1,0 +1,9 @@
+user_access:
+  access_as:
+    agent: {}
+  projects:
+    - id: banterbus/banterbus
+
+ci_access:
+  projects:
+    - id: banterbus/banterbus
