@@ -41,3 +41,25 @@ spec:
     role: k8s-auth-role
     serviceAccount: default
   vaultConnectionRef: prod/openbao
+---
+apiVersion: secrets.hashicorp.com/v1beta1
+kind: VaultConnection
+metadata:
+  name: openbao
+  namespace: cloudflare-tunnel
+spec:
+  address: "https://openbao.homelab.haseebmajid.dev"
+  skipTLSVerify: true
+---
+apiVersion: secrets.hashicorp.com/v1beta1
+kind: VaultAuth
+metadata:
+  name: openbao
+  namespace: cloudflare-tunnel
+spec:
+  method: kubernetes
+  mount: kubernetes
+  kubernetes:
+    role: k8s-auth-role
+    serviceAccount: default
+  vaultConnectionRef: cloudflare-tunnel/openbao
