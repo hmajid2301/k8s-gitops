@@ -10,7 +10,7 @@ spec:
   prune: true
   sourceRef:
     kind: GitRepository
-    name: banterbus-source
+    name: banterbus
   targetNamespace: prod
   healthChecks:
     - apiVersion: apps/v1
