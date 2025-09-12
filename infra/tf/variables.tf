@@ -14,3 +14,38 @@ variable "git_branch" {
   type        = string
   default     = "main"
 }
+
+variable "cloudflare_token" {
+  description = "Cloudflare API token with tunnel permissions"
+  type        = string
+  sensitive   = true
+}
+
+variable "cloudflare_account_id" {
+  description = "Cloudflare Account ID"
+  type        = string
+}
+
+variable "openbao_address" {
+  description = "OpenBao server address"
+  type        = string
+  default     = "https://openbao.homelab.haseebmajid.dev"
+}
+
+variable "openbao_token" {
+  description = "OpenBao authentication token"
+  type        = string
+  sensitive   = true
+}
+
+variable "ssh_private_key_path" {
+  description = "Path to SSH private key for Flux"
+  type        = string
+  default     = "~/.ssh/id_ed25519"
+}
+
+variable "ssh_public_key_path" {
+  description = "Path to SSH public key for Flux"
+  type        = string
+  default     = "~/.ssh/id_ed25519.pub"
+}

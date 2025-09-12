@@ -1,4 +1,4 @@
-terraform {
+ terraform {
   required_version = ">= 1.7.0"
 
   required_providers {
@@ -17,6 +17,14 @@ terraform {
     local = {
       source  = "hashicorp/local"
       version = ">= 2.0"
+    }
+    cloudflare = {
+      source  = "cloudflare/cloudflare"
+      version = "~> 4.0"
+    }
+    vault = {
+      source  = "hashicorp/vault"
+      version = "~> 4.4.0"
     }
   }
 }
@@ -39,6 +47,17 @@ provider "flux" {
       password = var.gitlab_token
     }
   }
+}
+
+# Configure the Cloudflare Provider
+provider "cloudflare" {
+  api_token = var.cloudflare_token
+}
+
+# Configure the OpenBao Provider
+provider "vault" {
+  address = var.openbao_address
+  token   = var.openbao_token
 }
 
 # ==========================================

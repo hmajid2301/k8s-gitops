@@ -3,3 +3,16 @@
 gitlab_token = "your-gitlab-token-here"
 gitlab_project = "your-username/your-repo-name"
 git_branch = "main"
+
+# SSH Key Configuration (optional, defaults to ~/.ssh/id_ed25519)
+ssh_private_key_path = "~/.ssh/id_ed25519"
+ssh_public_key_path = "~/.ssh/id_ed25519.pub"
+
+# Create a token with following scopes
+# https://developers.cloudflare.com/cloudflare-one/connections/connect-networks/deployment-guides/terraform/#3-create-a-cloudflare-api-token
+cloudflare_token = ""
+cloudflare_account_id = ""
+
+# OpenBao Configuration
+openbao_address = "https://openbao.homelab.haseebmajid.dev"
+openbao_token = ""

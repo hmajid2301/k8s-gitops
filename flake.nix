@@ -57,9 +57,9 @@
             kustomize
             opentofu
             go-task
+            cloudflared
           ];
         };
       });
     };
 }
-
