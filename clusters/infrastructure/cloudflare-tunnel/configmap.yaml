@@ -1,0 +1,12 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: cloudflare-tunnel-config
+  namespace: cloudflare-tunnel
+data:
+  config.yaml: |
+    tunnel: k8s-gitops-tunnel
+    credentials-file: /etc/cloudflared/creds/credentials.json
+    ingress:
+      - service: http_status:404

@@ -20,11 +20,32 @@ spec:
   valuesFrom:
     - kind: Secret
       name: cloudflare-tunnel-token
-      valuesKey: token
+      valuesKey: tunnel_token
       targetPath: cloudflare.tunnel_token
   values:
-    # Token-based remote-managed tunnel: "k8s"
-    # Configure ingress rules via Cloudflare dashboard
+    tunnelTokenSecretName: cloudflare-tunnel-token
+    tunnelTokenSecretKey: tunnel_token
+    existingSecret: cloudflare-tunnel-token
+    args:
+      - tunnel
+      - --config
+      - /etc/cloudflared/config/config.yaml
+      - run
+      - k8s-gitops-tunnel
+    extraVolumeMounts:
+      - name: config
+        mountPath: /etc/cloudflared/config
+        readOnly: true
+      - name: creds
+        mountPath: /etc/cloudflared/creds
+        readOnly: true
+    extraVolumes:
+      - name: config
+        configMap:
+          name: cloudflare-tunnel-config
+      - name: creds
+        secret:
+          secretName: cloudflare-tunnel-creds
     replicaCount: 2
     resources:
       limits:
