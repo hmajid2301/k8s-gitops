@@ -20,14 +20,14 @@ spec:
         Automated image update
 
         Files:
-        {{ range .Changed.FileChanges -}}
-        - {{ .Path }}
+        {{ range $filename, $_ := .Changed.FileChanges -}}
+        - {{ $filename }}
         {{ end -}}
 
         Images:
-        {{ range .Changed.Objects -}}
-        {{ range .Changes -}}
-        - {{ .OldValue }} -> {{ .NewValue }}
+        {{ range $resource, $changes := .Changed.Objects -}}
+        {{ range $_, $change := $changes -}}
+        - {{ $change.OldValue }} -> {{ $change.NewValue }}
         {{ end -}}
         {{ end -}}
     push:
