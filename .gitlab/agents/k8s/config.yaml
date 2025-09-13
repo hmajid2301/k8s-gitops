@@ -2,8 +2,8 @@ user_access:
   access_as:
     agent: {}
   projects:
-    - id: banterbus/banterbus
+    - id: "59925362"
 
 ci_access:
   projects:
-    - id: banterbus/banterbus
+    - id: "59925362"

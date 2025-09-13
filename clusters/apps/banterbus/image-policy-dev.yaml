@@ -1,0 +1,14 @@
+apiVersion: image.toolkit.fluxcd.io/v1beta2
+kind: ImagePolicy
+metadata:
+  name: banterbus-dev
+  namespace: flux-system
+spec:
+  imageRepositoryRef:
+    name: banterbus
+  filterTags:
+    pattern: '^dev-(?P<commit>[a-f0-9]{40})-(?P<timestamp>[0-9]+)$'
+    extract: '$timestamp'
+  policy:
+    numerical:
+      order: asc

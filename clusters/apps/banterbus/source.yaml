@@ -1,14 +1,13 @@
 ---
+# GitRepository for banterbus application
+# This source is used by Kustomizations to deploy the app
 apiVersion: source.toolkit.fluxcd.io/v1
 kind: GitRepository
 metadata:
   name: banterbus
   namespace: flux-system
 spec:
-  interval: 1m0s
+  interval: 1m
   url: https://gitlab.com/banterbus/banterbus.git
   ref:
     branch: main
-  ignore: |
-    /*
-    !/infra/k8s/

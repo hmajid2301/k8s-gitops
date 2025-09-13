@@ -1,0 +1,37 @@
+apiVersion: image.toolkit.fluxcd.io/v1beta2
+kind: ImageUpdateAutomation
+metadata:
+  name: banterbus
+  namespace: flux-system
+spec:
+  interval: 5m
+  sourceRef:
+    kind: GitRepository
+    name: flux-system
+  git:
+    checkout:
+      ref:
+        branch: main
+    commit:
+      author:
+        email: flux@flux.io
+        name: flux
+      messageTemplate: |
+        Automated image update
+
+        Files:
+        {{ range .Changed.FileChanges -}}
+        - {{ .Path }}
+        {{ end -}}
+
+        Images:
+        {{ range .Changed.Objects -}}
+        {{ range .Changes -}}
+        - {{ .OldValue }} -> {{ .NewValue }}
+        {{ end -}}
+        {{ end -}}
+    push:
+      branch: main
+  update:
+    path: "./clusters/apps/banterbus"
+    strategy: Setters

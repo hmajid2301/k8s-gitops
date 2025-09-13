@@ -5,13 +5,17 @@ metadata:
   name: banterbus-prod
   namespace: flux-system
 spec:
-  interval: 5m0s
-  path: ./infra/k8s/overlays/prod
+  interval: 5m
   prune: true
   sourceRef:
     kind: GitRepository
     name: banterbus
   targetNamespace: prod
+  path: ./infra/k8s/overlays/prod
+  images:
+    - name: registry.gitlab.com/banterbus/banterbus
+      newName: registry.gitlab.com/banterbus/banterbus
+      newTag: prod-18eb0bb0a5fae45e757ef586934d06bedd50026a-1757113281 # {"$imagepolicy": "flux-system:banterbus-prod"}
   healthChecks:
     - apiVersion: apps/v1
       kind: Deployment
