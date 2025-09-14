@@ -11,4 +11,6 @@ data:
     ingress:
     - hostname: dev.banterbus.games
       service: http://banterbus.dev.svc.cluster.local:80
+    - hostname: banterbus.games
+      service: http://banterbus.prod.svc.cluster.local:80
     - service: http_status:404
