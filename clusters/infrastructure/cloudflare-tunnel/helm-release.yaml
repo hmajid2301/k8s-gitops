@@ -28,9 +28,9 @@ spec:
     existingSecret: cloudflare-tunnel-token
     args:
       - tunnel
+      - run
       - --config
       - /etc/cloudflared/config/config.yaml
-      - run
       - k8s-gitops-tunnel
     extraVolumeMounts:
       - name: config
