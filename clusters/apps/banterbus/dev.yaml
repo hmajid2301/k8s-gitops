@@ -12,7 +12,7 @@ spec:
   targetNamespace: dev
   path: ./infra/k8s/overlays/dev
   images:
-    - name: registry.gitlab.com/banterbus/banterbus
+    - name: registry.gitlab.com/hmajid2301/banterbus
       # {"$imagepolicy": "flux-system:banterbus-dev:name"}
       newTag: dev-be4f44ff5c8d9b8600a13393c5673fa6214eadb6-1757839631 # {"$imagepolicy": "flux-system:banterbus-dev:tag"}
   healthChecks:
