@@ -18,8 +18,14 @@ spec:
   install:
     createNamespace: true
   values:
-    existingSecret: cloudflare-tunnel-token
-    tunnelTokenSecretKey: tunnel_token
+    cloudflare:
+      tunnel_token: ""
+    env:
+      - name: TUNNEL_TOKEN
+        valueFrom:
+          secretKeyRef:
+            name: cloudflare-tunnel-token
+            key: tunnel_token
 
     replicaCount: 2
     resources:
