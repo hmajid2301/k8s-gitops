@@ -1,3 +1,4 @@
+---
 apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
 metadata:
@@ -11,10 +12,11 @@ spec:
     name: banterbus
   targetNamespace: dev
   path: ./infra/k8s/overlays/dev
+
   images:
     - name: registry.gitlab.com/banterbus/banterbus
-      newName: registry.gitlab.com/banterbus/banterbus
-      newTag: registry.gitlab.com/banterbus/banterbus:dev-4d4bce44554ed34bafbb0a3c835fc44cca9efaaf-1757799507 # {"$imagepolicy": "flux-system:banterbus-dev"}
+      # {"$imagepolicy": "flux-system:banterbus-dev:name"}
+      newTag: dev  # {"$imagepolicy": "flux-system:banterbus-dev:tag"}
   healthChecks:
     - apiVersion: apps/v1
       kind: Deployment

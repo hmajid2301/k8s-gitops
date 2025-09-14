@@ -7,7 +7,7 @@ namespace: cloudflare-tunnel
 resources:
    - namespace.yaml
    - vault-secret.yaml
+   - vault-creds-secret.yaml
    - helm-repository.yaml
    - configmap.yaml
-   - credentials-configmap.yaml
    - helm-release.yaml

@@ -5,10 +5,10 @@ metadata:
   name: cloudflare-tunnel-config
   namespace: cloudflare-tunnel
 data:
-   config.yaml: |
-     tunnel: k8s-gitops-tunnel
-     credentials-file: /etc/cloudflared/creds/credentials.json
-     ingress:
-       - hostname: dev.banterbus.games
-         service: http://banterbus.dev.svc.cluster.local:8080
-       - service: http_status:404
+  config.yaml: |
+    tunnel: k8s-gitops-tunnel
+    credentials-file: /etc/cloudflared/creds/credentials.json
+    ingress:
+    - hostname: dev.banterbus.games
+      service: http://banterbus.dev.svc.cluster.local:80
+    - service: http_status:404
