@@ -17,14 +17,7 @@ spec:
       interval: 12h
   install:
     createNamespace: true
-  valuesFrom:
-    - kind: Secret
-      name: cloudflare-tunnel-token
-      valuesKey: tunnel_token
-      targetPath: cloudflare.tunnel_token
   values:
-    tunnelTokenSecretName: cloudflare-tunnel-token
-    tunnelTokenSecretKey: tunnel_token
     existingSecret: cloudflare-tunnel-token
 
     replicaCount: 2
