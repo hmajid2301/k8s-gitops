@@ -1,0 +1,76 @@
+# Bootstrap job to pull Tailscale secrets from OpenBao using node's Tailscale connection
+# This solves the chicken-and-egg problem where Tailscale needs secrets from OpenBao
+# but OpenBao is only accessible via Tailscale network
+#
+# To enable: uncomment in kustomization.yaml and create bootstrap-vault-token secret
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: tailscale-bootstrap
+  namespace: tailscale
+spec:
+  template:
+    spec:
+      hostNetwork: true  # Uses node's Tailscale connection
+      restartPolicy: OnFailure
+      serviceAccountName: tailscale-bootstrap
+      containers:
+      - name: bootstrap
+        image: hashicorp/vault:latest
+        env:
+        - name: VAULT_ADDR
+          value: "https://openbao.homelab.haseebmajid.dev"
+        - name: VAULT_TOKEN
+          valueFrom:
+            secretKeyRef:
+              name: bootstrap-vault-token
+              key: token
+        command:
+        - /bin/sh
+        - -c
+        - |
+          # Check if secret already exists
+          if kubectl get secret operator-oauth -n tailscale 2>/dev/null; then
+            echo "Secret already exists, skipping bootstrap"
+            exit 0
+          fi
+
+          # Fetch Tailscale OAuth credentials from OpenBao
+          vault kv get -format=json kv/infra/tailscale | \
+          jq -r '.data.data | to_entries[] | "\(.key)=\(.value)"' > /tmp/env
+
+          # Create Kubernetes secret for Tailscale operator
+          kubectl create secret generic operator-oauth \
+            --from-env-file=/tmp/env \
+            -n tailscale
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: tailscale-bootstrap
+  namespace: tailscale
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: tailscale-bootstrap
+  namespace: tailscale
+rules:
+- apiGroups: [""]
+  resources: ["secrets"]
+  verbs: ["create", "get", "list"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: tailscale-bootstrap
+  namespace: tailscale
+subjects:
+- kind: ServiceAccount
+  name: tailscale-bootstrap
+  namespace: tailscale
+roleRef:
+  kind: Role
+  name: tailscale-bootstrap
+  apiGroup: rbac.authorization.k8s.io

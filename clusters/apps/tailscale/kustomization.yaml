@@ -5,3 +5,5 @@ resources:
   - helm-release.yaml
   - vault-secret.yaml
   - connector.yaml
+  # Uncomment below to enable bootstrap job for initial setup
+  # - bootstrap-job.yaml

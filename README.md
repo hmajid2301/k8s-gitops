@@ -61,3 +61,15 @@ kubectl create secret generic operator-oauth -n tailscale \
         --from-literal=client_id=$TAILSCALE_CLIENT_ID  \
         --from-literal=client_secret=$TAILSCALE_CLIENT_SECRET
 ```
+
+Potentially solved using init container with host network, assuming host is already on tailnet
+
+### OpenBao
+
+Setup the terraform policy and user and password manually so it can configure everything else we need with openbao.
+
+Potentially solved with this: https://openbao.org/docs/rfcs/self-init/#proof-of-concept
+
+### Authentik
+
+Manually create token for banterbus terraform maybe also migrate to use the service account
