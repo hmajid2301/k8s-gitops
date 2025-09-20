@@ -22,3 +22,42 @@ path "kv/data/infra/cloudflare" {
 }
 EOT
 }
+
+# Generate random secret key for Bugsink
+resource "random_password" "bugsink_secret_key" {
+  length  = 50
+  special = true
+  upper   = true
+  lower   = true
+  numeric = true
+}
+
+# Store Bugsink secrets in OpenBao
+resource "vault_kv_secret_v2" "bugsink" {
+  mount               = "kv"
+  name                = "apps/bugsink"
+  cas                 = 1
+  delete_all_versions = true
+
+  data_json = jsonencode({
+    secret_key = random_password.bugsink_secret_key.result
+    admin_user = "admin"
+    admin_pass = "admin"
+  })
+}
+
+# Create OpenBao policy for Bugsink access
+resource "vault_policy" "bugsink" {
+  name = "bugsink"
+
+  policy = <<EOT
+# Allow full access to bugsink secrets
+path "kv/data/apps/bugsink" {
+  capabilities = ["create", "read", "update", "delete"]
+}
+
+path "kv/metadata/apps/bugsink" {
+  capabilities = ["read", "list"]
+}
+EOT
+}
