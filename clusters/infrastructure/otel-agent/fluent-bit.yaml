@@ -1,0 +1,174 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2beta1
+kind: HelmRelease
+metadata:
+  name: fluent-bit
+  namespace: monitoring
+spec:
+  interval: 30m
+  chart:
+    spec:
+      chart: fluent-bit
+      version: "*"
+      sourceRef:
+        kind: HelmRepository
+        name: fluent
+        namespace: monitoring
+      interval: 12h
+  install:
+    createNamespace: true
+  values:
+    # Deploy as DaemonSet to collect logs from all nodes
+    kind: DaemonSet
+
+    # Service account with log access permissions
+    serviceAccount:
+      create: false
+      name: otel-agent
+
+    # Fluent Bit configuration
+    config:
+      service: |
+        [SERVICE]
+            Daemon Off
+            Flush 1
+            Log_Level info
+            Parsers_File parsers.conf
+            HTTP_Server On
+            HTTP_Listen 0.0.0.0
+            HTTP_Port 2020
+            Health_Check On
+
+      inputs: |
+        [INPUT]
+            Name tail
+            Path /var/log/containers/*.log
+            multiline.parser docker, cri
+            Tag kube.*
+            Mem_Buf_Limit 50MB
+            Skip_Long_Lines On
+            Exclude_Path /var/log/containers/*_monitoring_*.log,/var/log/containers/*_kube-system_*.log,/var/log/containers/*_flux-system_*.log
+
+        [INPUT]
+            Name systemd
+            Tag systemd.*
+            Systemd_Filter _SYSTEMD_UNIT=kubelet.service
+            Systemd_Filter _SYSTEMD_UNIT=containerd.service
+            Systemd_Filter _SYSTEMD_UNIT=docker.service
+            Read_From_Tail On
+
+      filters: |
+        [FILTER]
+            Name kubernetes
+            Match kube.*
+            Kube_URL https://kubernetes.default.svc:443
+            Kube_CA_File /var/run/secrets/kubernetes.io/serviceaccount/ca.crt
+            Kube_Token_File /var/run/secrets/kubernetes.io/serviceaccount/token
+            Kube_Tag_Prefix kube.var.log.containers.
+            Merge_Log On
+            Merge_Log_Key log_processed
+            K8S-Logging.Parser On
+            K8S-Logging.Exclude Off
+            Annotations Off
+            Labels On
+
+        [FILTER]
+            Name nest
+            Match kube.*
+            Operation lift
+            Nested_under kubernetes
+            Add_prefix k8s.
+
+        [FILTER]
+            Name modify
+            Match *
+            Add cluster_name homelab
+            Add environment production
+            Add source k8s-logs
+
+        [FILTER]
+            Name grep
+            Match *
+            Exclude log ^\s*$
+
+      outputs: |
+        [OUTPUT]
+            Name opentelemetry
+            Match *
+            Host otel-collector.homelab.haseebmajid.dev
+            Port 443
+            Metrics_uri /v1/metrics
+            Logs_uri /v1/logs
+            Traces_uri /v1/traces
+            Log_response_payload True
+            Tls On
+            Tls.verify Off
+            Add_label cluster homelab
+            Add_label environment production
+
+      parsers: |
+        [PARSER]
+            Name docker
+            Format json
+            Time_Key time
+            Time_Format %Y-%m-%dT%H:%M:%S.%LZ
+
+        [PARSER]
+            Name cri
+            Format regex
+            Regex ^(?<time>[^ ]+) (?<stream>stdout|stderr) (?<logtag>[^ ]*) (?<message>.*)$
+            Time_Key time
+            Time_Format %Y-%m-%dT%H:%M:%S.%L%z
+
+    # Resource limits for Fluent Bit
+    resources:
+      limits:
+        cpu: 200m
+        memory: 200Mi
+      requests:
+        cpu: 100m
+        memory: 128Mi
+
+    # Node selection and tolerations
+    nodeSelector:
+      kubernetes.io/os: linux
+
+    tolerations:
+      - operator: Exists
+        effect: NoSchedule
+      - operator: Exists
+        effect: NoExecute
+
+    # Security context
+    securityContext:
+      capabilities:
+        drop:
+          - ALL
+      runAsNonRoot: true
+      runAsUser: 1000
+      runAsGroup: 1000
+      readOnlyRootFilesystem: true
+
+    # Volume mounts for log access
+    volumeMounts:
+      - name: varlog
+        mountPath: /var/log
+        readOnly: true
+      - name: varlibdockercontainers
+        mountPath: /var/lib/docker/containers
+        readOnly: true
+      - name: etcmachineid
+        mountPath: /etc/machine-id
+        readOnly: true
+
+    daemonSetVolumes:
+      - name: varlog
+        hostPath:
+          path: /var/log
+      - name: varlibdockercontainers
+        hostPath:
+          path: /var/lib/docker/containers
+      - name: etcmachineid
+        hostPath:
+          path: /etc/machine-id
+          type: File

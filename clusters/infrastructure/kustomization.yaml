@@ -7,3 +7,6 @@ resources:
   - secrets-store-csi-driver
   - gitlab-agent
   - cloudflare-tunnel
+  - otel-agent
+  - mirrord
+  - headlamp

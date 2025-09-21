@@ -1,0 +1,75 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2beta1
+kind: HelmRelease
+metadata:
+  name: kube-state-metrics
+  namespace: monitoring
+spec:
+  interval: 30m
+  chart:
+    spec:
+      chart: kube-state-metrics
+      version: "*"
+      sourceRef:
+        kind: HelmRepository
+        name: prometheus-community
+        namespace: monitoring
+      interval: 12h
+  install:
+    createNamespace: true
+  values:
+    # Enable common metrics
+    collectors:
+      - certificatesigningrequests
+      - configmaps
+      - cronjobs
+      - daemonsets
+      - deployments
+      - endpoints
+      - horizontalpodautoscalers
+      - ingresses
+      - jobs
+      - leases
+      - limitranges
+      - mutatingwebhookconfigurations
+      - namespaces
+      - networkpolicies
+      - nodes
+      - persistentvolumeclaims
+      - persistentvolumes
+      - poddisruptionbudgets
+      - pods
+      - replicasets
+      - replicationcontrollers
+      - resourcequotas
+      - secrets
+      - services
+      - statefulsets
+      - storageclasses
+      - validatingwebhookconfigurations
+      - volumeattachments
+
+    # Resource configuration
+    resources:
+      limits:
+        cpu: 200m
+        memory: 256Mi
+      requests:
+        cpu: 100m
+        memory: 128Mi
+
+    # Service configuration for scraping
+    service:
+      port: 8080
+      type: ClusterIP
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "8080"
+        prometheus.io/path: "/metrics"
+
+    # Security context
+    securityContext:
+      enabled: true
+      runAsUser: 65534
+      runAsGroup: 65534
+      fsGroup: 65534

@@ -1,0 +1,47 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2beta1
+kind: HelmRelease
+metadata:
+  name: mirrord-operator
+  namespace: mirrord
+spec:
+  interval: 30m
+  chart:
+    spec:
+      chart: mirrord-operator
+      version: "*"
+      sourceRef:
+        kind: HelmRepository
+        name: mirrord
+        namespace: mirrord
+      interval: 12h
+  install:
+    createNamespace: true
+  values:
+    operator:
+      # Use existing service account
+      serviceAccount:
+        create: false
+        name: mirrord-operator
+
+      # Resource limits
+      resources:
+        limits:
+          cpu: 500m
+          memory: 512Mi
+        requests:
+          cpu: 100m
+          memory: 128Mi
+
+    # Enable webhook for better integration
+    webhook:
+      enabled: true
+
+    # License key (optional for community features)
+    # license: ""
+
+    # Node selector for control plane nodes if needed
+    nodeSelector: {}
+
+    # Tolerations for control plane scheduling
+    tolerations: []

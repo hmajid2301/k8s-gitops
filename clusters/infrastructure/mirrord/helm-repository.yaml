@@ -1,0 +1,9 @@
+---
+apiVersion: source.toolkit.fluxcd.io/v1beta2
+kind: HelmRepository
+metadata:
+  name: mirrord
+  namespace: mirrord
+spec:
+  interval: 1h
+  url: https://metalbear-co.github.io/mirrord

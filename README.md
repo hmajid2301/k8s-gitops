@@ -35,8 +35,7 @@ tofu apply
 └── terraform/              # Bootstrap configuration
 ```
 
-
-## Manual step
+#  Manual step
 
 To setup homelab some commands need to be run manually for now until we can move it into terraform/automate it.
 
@@ -70,6 +69,6 @@ Setup the terraform policy and user and password manually so it can configure ev
 
 Potentially solved with this: https://openbao.org/docs/rfcs/self-init/#proof-of-concept
 
-### Authentik
+### Grafana
 
-Manually create token for banterbus terraform maybe also migrate to use the service account
+Manually create a terraform service account.

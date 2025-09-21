@@ -1,0 +1,88 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2beta1
+kind: HelmRelease
+metadata:
+  name: headlamp
+  namespace: headlamp
+spec:
+  interval: 30m
+  chart:
+    spec:
+      chart: headlamp
+      version: "*"
+      sourceRef:
+        kind: HelmRepository
+        name: headlamp
+        namespace: headlamp
+      interval: 12h
+  install:
+    createNamespace: true
+  values:
+    # Use existing service account
+    serviceAccount:
+      create: false
+      name: headlamp
+
+    # Enable in-cluster mode
+    config:
+      oidc:
+        enabled: false
+      baseURL: ""
+
+    # Resource configuration
+    resources:
+      limits:
+        cpu: 200m
+        memory: 256Mi
+      requests:
+        cpu: 100m
+        memory: 128Mi
+
+    # Service configuration - NodePort for host access
+    service:
+      type: NodePort
+      port: 80
+      nodePort: 30080
+
+    # Enable persistence for plugins
+    persistence:
+      enabled: true
+      size: 1Gi
+      storageClass: ""
+
+    # Plugin configuration
+    plugins:
+      enabled: true
+
+    # Volume mounts for plugin configuration
+    extraVolumes:
+      - name: flux-plugin
+        configMap:
+          name: headlamp-flux-plugin
+      - name: headlamp-config
+        configMap:
+          name: headlamp-config
+
+    extraVolumeMounts:
+      - name: flux-plugin
+        mountPath: /headlamp/plugins
+      - name: headlamp-config
+        mountPath: /headlamp/config
+
+    # Environment variables
+    env:
+      - name: HEADLAMP_CONFIG_DIR
+        value: "/headlamp/config"
+      - name: HEADLAMP_PLUGINS_DIR
+        value: "/headlamp/plugins"
+
+    # Security context
+    securityContext:
+      runAsNonRoot: true
+      runAsUser: 100
+      runAsGroup: 101
+
+    # Node selection
+    nodeSelector: {}
+    tolerations: []
+    affinity: {}

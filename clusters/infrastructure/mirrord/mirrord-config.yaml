@@ -1,0 +1,82 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: mirrord-config-dev
+  namespace: dev
+data:
+  config.json: |
+    {
+      "feature": {
+        "network": {
+          "incoming": {
+            "mode": "steal",
+            "http_header_keys": ["host", "user-agent"]
+          },
+          "outgoing": {
+            "tcp": true,
+            "udp": true
+          }
+        },
+        "fs": {
+          "mode": "read",
+          "read_write": ".+\\.(json|yaml|yml|toml)$",
+          "read_only": [
+            ".+\\.log$"
+          ]
+        },
+        "env": {
+          "include": "DATABASE_.*|REDIS_.*|.*_URL",
+          "exclude": "SECRET_.*|.*_PASSWORD|.*_TOKEN"
+        }
+      },
+      "agent": {
+        "log_level": "info",
+        "namespace": "dev",
+        "image": "ghcr.io/metalbear-co/mirrord:latest",
+        "image_pull_policy": "IfNotPresent",
+        "ttl": 3600
+      },
+      "operator": true
+    }
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: mirrord-config-prod
+  namespace: prod
+data:
+  config.json: |
+    {
+      "feature": {
+        "network": {
+          "incoming": {
+            "mode": "mirror",
+            "http_header_keys": ["host", "user-agent"]
+          },
+          "outgoing": {
+            "tcp": true,
+            "udp": true
+          }
+        },
+        "fs": {
+          "mode": "read",
+          "read_only": [
+            ".+\\.log$",
+            ".+\\.(json|yaml|yml|toml)$"
+          ]
+        },
+        "env": {
+          "include": "DATABASE_.*|REDIS_.*|.*_URL",
+          "exclude": "SECRET_.*|.*_PASSWORD|.*_TOKEN"
+        }
+      },
+      "agent": {
+        "log_level": "warn",
+        "namespace": "prod",
+        "image": "ghcr.io/metalbear-co/mirrord:latest",
+        "image_pull_policy": "IfNotPresent",
+        "ttl": 1800
+      },
+      "operator": true
+    }
