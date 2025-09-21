@@ -72,12 +72,20 @@ spec:
     postgresql:
       enabled: false
 
-    # Pod security context - allow writing to filesystem
-    # Pod security context - disable for now to allow SQLite writes
+    # Pod security context
     securityContext:
-      runAsNonRoot: false
-      runAsUser: 0
-      fsGroup: 0
+      runAsNonRoot: true
+      runAsUser: 1000
+      fsGroup: 1000
+
+    # Add volumes for writable directories
+    extraVolumes:
+      - name: data-volume
+        emptyDir: {}
+
+    extraVolumeMounts:
+      - name: data-volume
+        mountPath: /data
 
     # Autoscaling
     autoscaling:
