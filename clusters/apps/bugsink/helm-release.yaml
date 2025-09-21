@@ -68,16 +68,11 @@ spec:
       enabled: false
 
     # Pod security context - allow writing to filesystem
+    # Pod security context - disable for now to allow SQLite writes
     securityContext:
-      runAsNonRoot: true
-      runAsUser: 1000
-      fsGroup: 1000
-
-    # Enable persistence for SQLite databases
-    persistence:
-      enabled: true
-      size: 1Gi
-      accessMode: ReadWriteOnce
+      runAsNonRoot: false
+      runAsUser: 0
+      fsGroup: 0
 
     # Autoscaling
     autoscaling:
