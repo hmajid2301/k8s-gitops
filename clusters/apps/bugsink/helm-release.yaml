@@ -62,6 +62,11 @@ spec:
           secretKeyRef:
             name: bugsink-secrets
             key: database_url
+      # Disable background task processing to avoid SQLite issues
+      - name: DIGEST_IMMEDIATELY
+        value: "True"
+      - name: TASK_ALWAYS_EAGER
+        value: "True"
 
     # Disable built-in PostgreSQL
     postgresql:
