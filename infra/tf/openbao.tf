@@ -50,10 +50,13 @@ resource "postgresql_database" "bugsink" {
 
 # Create PostgreSQL role for Bugsink
 resource "postgresql_role" "bugsink" {
-  provider = postgresql.homelab
-  name     = "bugsink"
-  login    = true
-  password = random_password.bugsink_db_password.result
+  provider         = postgresql.homelab
+  name             = "bugsink"
+  login            = true
+  password         = random_password.bugsink_db_password.result
+  create_database  = true
+  create_role      = false
+  superuser        = false
 }
 
 # Store Bugsink secrets in OpenBao

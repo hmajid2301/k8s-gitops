@@ -67,11 +67,17 @@ spec:
     postgresql:
       enabled: false
 
-    # Pod security context
+    # Pod security context - allow writing to filesystem
     securityContext:
       runAsNonRoot: true
       runAsUser: 1000
       fsGroup: 1000
+
+    # Enable persistence for SQLite databases
+    persistence:
+      enabled: true
+      size: 1Gi
+      accessMode: ReadWriteOnce
 
     # Autoscaling
     autoscaling:
