@@ -62,30 +62,50 @@ spec:
           secretKeyRef:
             name: bugsink-secrets
             key: database_url
-      # Disable background task processing to avoid SQLite issues
+      # Configure snappea task queue for containerized environment
       - name: DIGEST_IMMEDIATELY
         value: "True"
       - name: TASK_ALWAYS_EAGER
         value: "True"
+      - name: SNAPPEA_DATABASE_PATH
+        value: "/tmp/snappea.db"
 
     # Disable built-in PostgreSQL
     postgresql:
       enabled: false
 
-    # Pod security context
+    # Pod security context - run as root for SQLite write permissions
     securityContext:
-      runAsNonRoot: true
-      runAsUser: 1000
-      fsGroup: 1000
+      runAsNonRoot: false
+      runAsUser: 0
+      fsGroup: 0
 
-    # Add volumes for writable directories
+    # Container security context
+    containerSecurityContext:
+      runAsUser: 0
+
+    # Init containers for snappea database initialization
+    initContainers:
+      - name: snappea-init
+        image: bugsink/bugsink:latest
+        command: ["/bin/bash", "-c", "bugsink-manage migrate --database=snappea"]
+        envFrom:
+          - secretRef:
+              name: bugsink
+          - configMapRef:
+              name: bugsink
+        volumeMounts:
+          - name: tmp-data
+            mountPath: /tmp
+
+    # Add volumes for writable SQLite databases
     extraVolumes:
-      - name: data-volume
+      - name: tmp-data
         emptyDir: {}
 
     extraVolumeMounts:
-      - name: data-volume
-        mountPath: /data
+      - name: tmp-data
+        mountPath: /tmp
 
     # Autoscaling
     autoscaling:

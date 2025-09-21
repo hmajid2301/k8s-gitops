@@ -72,3 +72,7 @@ Potentially solved with this: https://openbao.org/docs/rfcs/self-init/#proof-of-
 ### Grafana
 
 Manually create a terraform service account.
+
+# TODO
+
+- bugsink to use postgres
