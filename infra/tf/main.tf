@@ -26,6 +26,14 @@
       source  = "hashicorp/vault"
       version = "~> 4.4.0"
     }
+    postgresql = {
+      source  = "cyrilgdn/postgresql"
+      version = "~> 1.21"
+    }
+    random = {
+      source  = "hashicorp/random"
+      version = "~> 3.6.0"
+    }
   }
 }
 
@@ -58,6 +66,19 @@ provider "cloudflare" {
 provider "vault" {
   address = var.openbao_address
   token   = var.openbao_token
+}
+
+# Configure the PostgreSQL Provider
+provider "postgresql" {
+  alias           = "homelab"
+  host            = var.postgres_host
+  port            = var.postgres_port
+  database        = "postgres" # Connect to default database
+  username        = var.postgres_username
+  password        = var.postgres_password
+  sslmode         = "disable"
+  connect_timeout = 15
+  superuser       = true
 }
 
 # ==========================================

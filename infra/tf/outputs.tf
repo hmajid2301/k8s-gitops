@@ -39,3 +39,8 @@ output "kubernetes_secret_name" {
   description = "Name of the Kubernetes secret that will be created by Vault Secrets Operator"
   value       = "cloudflare-tunnel-token"
 }
+
+output "bugsink_vault_path" {
+  description = "Path to Bugsink secrets in OpenBao/Vault"
+  value       = "kv/apps/bugsink"
+}

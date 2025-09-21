@@ -56,6 +56,16 @@ spec:
         value: "admin:admin"
       - name: PORT
         value: "8000"
+      # Database configuration - using external PostgreSQL
+      - name: DATABASE_URL
+        valueFrom:
+          secretKeyRef:
+            name: bugsink-secrets
+            key: database_url
+
+    # Disable built-in PostgreSQL
+    postgresql:
+      enabled: false
 
     # Pod security context
     securityContext:

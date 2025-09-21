@@ -32,6 +32,30 @@ resource "random_password" "bugsink_secret_key" {
   numeric = true
 }
 
+# Generate random password for Bugsink database user
+resource "random_password" "bugsink_db_password" {
+  length  = 32
+  special = true
+  upper   = true
+  lower   = true
+  numeric = true
+}
+
+# Create PostgreSQL database for Bugsink
+resource "postgresql_database" "bugsink" {
+  provider = postgresql.homelab
+  name     = "bugsink"
+  owner    = postgresql_role.bugsink.name
+}
+
+# Create PostgreSQL role for Bugsink
+resource "postgresql_role" "bugsink" {
+  provider = postgresql.homelab
+  name     = "bugsink"
+  login    = true
+  password = random_password.bugsink_db_password.result
+}
+
 # Store Bugsink secrets in OpenBao
 resource "vault_kv_secret_v2" "bugsink" {
   mount               = "kv"
@@ -40,10 +64,22 @@ resource "vault_kv_secret_v2" "bugsink" {
   delete_all_versions = true
 
   data_json = jsonencode({
-    secret_key = random_password.bugsink_secret_key.result
-    admin_user = "admin"
-    admin_pass = "admin"
+    secret_key         = random_password.bugsink_secret_key.result
+    admin_user         = "admin"
+    admin_pass         = "admin"
+    database_url       = "postgresql://${postgresql_role.bugsink.name}:${random_password.bugsink_db_password.result}@${var.postgres_host}:${var.postgres_port}/${postgresql_database.bugsink.name}?sslmode=disable"
+    db_user           = postgresql_role.bugsink.name
+    db_password       = random_password.bugsink_db_password.result
+    db_name           = postgresql_database.bugsink.name
+    db_host           = var.postgres_host
+    db_port           = var.postgres_port
   })
+
+  depends_on = [
+    postgresql_role.bugsink,
+    postgresql_database.bugsink,
+    random_password.bugsink_db_password
+  ]
 }
 
 # Create OpenBao policy for Bugsink access
