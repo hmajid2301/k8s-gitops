@@ -8,7 +8,8 @@ resources:
   - gitlab-agent
   - cloudflare-tunnel
   - otel-agent
-  - flux-operator
+  # TODO: flux-operator - chart repository not working
+  # - flux-operator
   - mirrord
   - openbao
   - tailscale
