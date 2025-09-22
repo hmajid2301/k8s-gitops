@@ -23,11 +23,16 @@ spec:
       create: false
       name: headlamp
 
-    # Enable in-cluster mode
+    # Enable in-cluster mode with proper base URL
     config:
       oidc:
         enabled: false
-      baseURL: ""
+      baseURL: "https://headlamp.homelab.haseebmajid.dev"
+
+    # Additional arguments for external access
+    args:
+      - -in-cluster
+      - -base-url=https://headlamp.homelab.haseebmajid.dev
 
     # Resource configuration
     resources:
