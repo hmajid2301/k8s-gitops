@@ -100,3 +100,67 @@ path "kv/metadata/apps/bugsink" {
 }
 EOT
 }
+
+# Generate random webhook token for GitLab integration
+resource "random_password" "gitlab_webhook_token" {
+  length  = 32
+  special = false
+  upper   = true
+  lower   = true
+  numeric = true
+}
+
+# Store GitLab secrets in OpenBao for preview environments
+resource "vault_kv_secret_v2" "gitlab" {
+  mount               = "kv"
+  name                = "apps/gitlab"
+  cas                 = 1
+  delete_all_versions = true
+
+  data_json = jsonencode({
+    # You need to manually set this in GitLab with api, read_repository scopes
+    token = var.gitlab_token
+    webhook_token = random_password.gitlab_webhook_token.result
+  })
+}
+
+# Create OpenBao policy for GitLab access (used by flux-system)
+resource "vault_policy" "gitlab" {
+  name = "gitlab"
+
+  policy = <<EOT
+# Allow read access to gitlab secrets for preview environments
+path "kv/data/apps/gitlab" {
+  capabilities = ["read"]
+}
+
+path "kv/metadata/apps/gitlab" {
+  capabilities = ["read", "list"]
+}
+EOT
+}
+
+# Create combined policy for flux-system namespace
+resource "vault_policy" "flux_system" {
+  name = "flux-system"
+
+  policy = <<EOT
+# Allow read access to gitlab secrets for preview environments
+path "kv/data/apps/gitlab" {
+  capabilities = ["read"]
+}
+
+path "kv/metadata/apps/gitlab" {
+  capabilities = ["read", "list"]
+}
+
+# Allow read access to bugsink secrets if needed
+path "kv/data/apps/bugsink" {
+  capabilities = ["read"]
+}
+
+path "kv/metadata/apps/bugsink" {
+  capabilities = ["read", "list"]
+}
+EOT
+}

@@ -50,31 +50,9 @@ spec:
       size: 1Gi
       storageClass: ""
 
-    # Plugin configuration
+    # Plugin configuration - using sidecar approach
     plugins:
       enabled: true
-
-    # Volume mounts for plugin configuration
-    extraVolumes:
-      - name: flux-plugin
-        configMap:
-          name: headlamp-flux-plugin
-      - name: headlamp-config
-        configMap:
-          name: headlamp-config
-
-    extraVolumeMounts:
-      - name: flux-plugin
-        mountPath: /headlamp/plugins
-      - name: headlamp-config
-        mountPath: /headlamp/config
-
-    # Environment variables
-    env:
-      - name: HEADLAMP_CONFIG_DIR
-        value: "/headlamp/config"
-      - name: HEADLAMP_PLUGINS_DIR
-        value: "/headlamp/plugins"
 
     # Security context
     securityContext:

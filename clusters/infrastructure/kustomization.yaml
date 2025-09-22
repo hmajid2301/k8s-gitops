@@ -8,4 +8,9 @@ resources:
   - gitlab-agent
   - cloudflare-tunnel
   - otel-agent
+  - flux-operator
   - mirrord
+  - openbao
+  - preview-environments
+  - tailscale
+  - flux-operator

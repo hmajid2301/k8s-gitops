@@ -39,6 +39,18 @@ tofu apply
 
 To setup homelab some commands need to be run manually for now until we can move it into terraform/automate it.
 
+### GitLab
+
+Create a PAT in GitLab
+
+```
+# Create a GitLab Personal Access Token with these scopes:
+# - 'api' (for preview environments, webhooks, MR access)
+# - 'read_repository' (for cloning, branch access)
+# - 'write_repository' (for Flux GitOps commits)
+# - 'read_user' (for MR author info in preview environments)
+```
+
 ### Tailscale
 
 Create the following tags in your policy
@@ -71,7 +83,7 @@ Potentially solved with this: https://openbao.org/docs/rfcs/self-init/#proof-of-
 
 ### Grafana
 
-Manually create a terraform service account.
+Create a terraform service account.
 
 # TODO
 

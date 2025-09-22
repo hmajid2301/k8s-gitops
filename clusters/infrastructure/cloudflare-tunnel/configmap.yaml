@@ -11,6 +11,8 @@ data:
     ingress:
     - hostname: bugsink.haseebmajid.dev
       service: http://bugsink.prod.svc.cluster.local:8000
+    - hostname: flux-webhook.homelab.haseebmajid.dev
+      service: http://flux-operator-webhook.flux-system.svc.cluster.local:9443
     - hostname: dev.banterbus.games
       service: http://banterbus.dev.svc.cluster.local:80
     - hostname: banterbus.games
