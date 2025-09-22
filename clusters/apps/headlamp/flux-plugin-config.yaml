@@ -3,7 +3,7 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: headlamp-flux-plugin
-  namespace: headlamp
+  namespace: prod
 data:
   # Flux plugin configuration
   flux-plugin.js: |
@@ -59,7 +59,7 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: headlamp-config
-  namespace: headlamp
+  namespace: prod
 data:
   # Headlamp configuration
   config.json: |

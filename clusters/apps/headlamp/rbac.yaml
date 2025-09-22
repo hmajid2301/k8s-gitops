@@ -3,7 +3,7 @@ apiVersion: v1
 kind: ServiceAccount
 metadata:
   name: headlamp
-  namespace: headlamp
+  namespace: prod
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
@@ -14,16 +14,16 @@ roleRef:
   kind: ClusterRole
   name: cluster-admin
 subjects:
-- kind: ServiceAccount
-  name: headlamp
-  namespace: headlamp
+  - kind: ServiceAccount
+    name: headlamp
+    namespace: prod
 ---
 # Create a token secret for the service account
 apiVersion: v1
 kind: Secret
 metadata:
   name: headlamp-token
-  namespace: headlamp
+  namespace: prod
   annotations:
     kubernetes.io/service-account.name: headlamp
 type: kubernetes.io/service-account-token

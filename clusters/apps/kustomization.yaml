@@ -4,5 +4,6 @@ kind: Kustomization
 resources:
   - banterbus
   - bugsink
+  - headlamp
   - openbao
   - tailscale

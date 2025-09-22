@@ -9,4 +9,3 @@ resources:
   - cloudflare-tunnel
   - otel-agent
   - mirrord
-  - headlamp

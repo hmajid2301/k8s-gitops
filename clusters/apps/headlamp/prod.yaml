@@ -1,0 +1,21 @@
+---
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: headlamp-prod
+  namespace: flux-system
+spec:
+  interval: 5m
+  prune: true
+  sourceRef:
+    kind: GitRepository
+    name: flux-system
+  targetNamespace: prod
+  path: ./clusters/apps/headlamp
+  healthChecks:
+    - apiVersion: apps/v1
+      kind: Deployment
+      name: headlamp
+      namespace: prod
+  dependsOn:
+    - name: flux-system
