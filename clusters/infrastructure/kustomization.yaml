@@ -13,4 +13,3 @@ resources:
   - openbao
   - preview-environments
   - tailscale
-  - flux-operator

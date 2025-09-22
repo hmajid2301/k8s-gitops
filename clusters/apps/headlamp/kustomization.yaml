@@ -4,6 +4,6 @@ kind: Kustomization
 resources:
   - helm-repository.yaml
   - rbac.yaml
-  - flux-plugin-config.yaml
+
   - helm-release.yaml
   - service-account.yaml
