@@ -11,5 +11,4 @@ resources:
   - flux-operator
   - mirrord
   - openbao
-  - preview-environments
   - tailscale
