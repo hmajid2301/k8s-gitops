@@ -76,3 +76,5 @@ Manually create a terraform service account.
 # TODO
 
 - bugsink to use postgres
+
+sudo -u postgres pg_upgrade -b "$(nix build --no-link --print-out-paths nixpkgs#postgresql_16.out)/bin" -B /run/current-system/sw/bin -d /var/lib/postgresql/16 -D /var/lib/postgresql/17
