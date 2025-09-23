@@ -8,3 +8,4 @@ resources:
   - resourceset.yaml
   - webhook-receiver.yaml
   - webhook-ingress.yaml
+  - webhook-nodeport.yaml

@@ -5,7 +5,7 @@ metadata:
   name: gitlab-preview-environments
   namespace: flux-system
 spec:
-  serviceAccountName: default
+  serviceAccountName: preview-environments
   inputsFrom:
     - apiVersion: fluxcd.controlplane.io/v1
       kind: ResourceSetInputProvider

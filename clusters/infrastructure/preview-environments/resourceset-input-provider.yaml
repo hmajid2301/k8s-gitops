@@ -8,7 +8,7 @@ metadata:
     fluxcd.controlplane.io/reconcileEvery: "5m"
 spec:
   type: GitLabMergeRequest
-  url: https://gitlab.com/hmajid2301/k8s-gitops
+  url: https://gitlab.com/hmajid2301/banterbus
   secretRef:
     name: gitlab-api-token
   filter:

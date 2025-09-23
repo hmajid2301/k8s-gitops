@@ -1,0 +1,15 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: webhook-receiver-nodeport
+  namespace: flux-system
+spec:
+  type: NodePort
+  ports:
+    - name: http
+      port: 80
+      targetPort: http-webhook
+      nodePort: 30081
+  selector:
+    app: notification-controller
