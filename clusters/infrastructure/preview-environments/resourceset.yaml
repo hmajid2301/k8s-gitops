@@ -1,145 +1,74 @@
 ---
-apiVersion: operator.fluxcd.io/v1alpha1
+apiVersion: fluxcd.controlplane.io/v1
 kind: ResourceSet
 metadata:
   name: gitlab-preview-environments
   namespace: flux-system
 spec:
-  # Interval for checking GitLab API
-  interval: 5m
-
-  # GitLab configuration - template for any project
-  gitlab:
-    url: https://gitlab.com
-    # Projects must set this via annotation: preview.flux.dev/project-id
-    projectID: "{{ .Repository.FullName }}"
-    tokenRef:
-      secretRef:
-        name: gitlab-api-credentials
-        key: token
-    webhookTokenRef:
-      secretRef:
-        name: gitlab-api-credentials
-        key: webhook_token
-    webhookURL: https://flux-webhook.homelab.haseebmajid.dev/webhook
-
-  # Resource templates for each MR - completely generic
+  serviceAccountName: default
+  inputsFrom:
+    - apiVersion: fluxcd.controlplane.io/v1
+      kind: ResourceSetInputProvider
+      name: banterbus-merge-requests
   resources:
-  - apiVersion: source.toolkit.fluxcd.io/v1
-    kind: GitRepository
-    metadata:
-      name: "{{ .Repository.Name }}-mr-{{ .MergeRequest.IID }}"
-      namespace: flux-system
-      labels:
-        preview.flux.dev/enabled: "true"
-        preview.flux.dev/project: "{{ .Repository.Name }}"
-        preview.flux.dev/merge-request: "{{ .MergeRequest.IID }}"
-    spec:
-      interval: 1m
-      url: "{{ .Repository.CloneURL }}"
-      ref:
-        branch: "{{ .MergeRequest.SourceBranch }}"
-      timeout: 60s
+    - apiVersion: source.toolkit.fluxcd.io/v1
+      kind: GitRepository
+      metadata:
+        name: "banterbus-mr-<< inputs.id >>"
+        namespace: flux-system
+        labels:
+          preview.flux.dev/enabled: "true"
+          preview.flux.dev/project: "<< inputs.project_name >>"
+          preview.flux.dev/merge-request: "<< inputs.id >>"
+      spec:
+        interval: 1m
+        url: "<< inputs.clone_url >>"
+        ref:
+          branch: "<< inputs.branch >>"
+        timeout: 60s
 
-  - apiVersion: kustomize.toolkit.fluxcd.io/v1
-    kind: Kustomization
-    metadata:
-      name: "{{ .Repository.Name }}-mr-{{ .MergeRequest.IID }}"
-      namespace: flux-system
-      labels:
-        preview.flux.dev/enabled: "true"
-        preview.flux.dev/project: "{{ .Repository.Name }}"
-        preview.flux.dev/merge-request: "{{ .MergeRequest.IID }}"
-      annotations:
-        preview.flux.dev/source-branch: "{{ .MergeRequest.SourceBranch }}"
-        preview.flux.dev/target-branch: "{{ .MergeRequest.TargetBranch }}"
-        preview.flux.dev/author: "{{ .MergeRequest.Author.Name }}"
-        preview.flux.dev/gitlab-url: "{{ .MergeRequest.WebURL }}"
-    spec:
-      interval: 5m
-      prune: true
-      sourceRef:
-        kind: GitRepository
-        name: "{{ .Repository.Name }}-mr-{{ .MergeRequest.IID }}"
-      targetNamespace: "dev"
-      path: ./infra/k8s/overlays/preview
-      patches:
-      # Generic deployment patch - works for any service
-      - target:
-          kind: Deployment
-        patch: |
-          - op: replace
-            path: /metadata/name
-            value: "{{ .Repository.Name }}-mr-{{ .MergeRequest.IID }}"
-          - op: add
-            path: /metadata/labels/preview.flux.dev~1enabled
-            value: "true"
-          - op: add
-            path: /metadata/labels/preview.flux.dev~1project
-            value: "{{ .Repository.Name }}"
-          - op: add
-            path: /metadata/labels/preview.flux.dev~1merge-request
-            value: "{{ .MergeRequest.IID }}"
-          - op: add
-            path: /metadata/annotations/preview.flux.dev~1source-branch
-            value: "{{ .MergeRequest.SourceBranch }}"
-          - op: add
-            path: /metadata/annotations/preview.flux.dev~1gitlab-url
-            value: "{{ .MergeRequest.WebURL }}"
-      # Generic service patch - works for any service
-      - target:
-          kind: Service
-        patch: |
-          - op: replace
-            path: /metadata/name
-            value: "{{ .Repository.Name }}-mr-{{ .MergeRequest.IID }}"
-          - op: replace
-            path: /spec/selector/app
-            value: "{{ .Repository.Name }}-mr-{{ .MergeRequest.IID }}"
-          - op: add
-            path: /metadata/labels/preview.flux.dev~1enabled
-            value: "true"
-          - op: add
-            path: /metadata/labels/preview.flux.dev~1project
-            value: "{{ .Repository.Name }}"
-          - op: add
-            path: /metadata/labels/preview.flux.dev~1merge-request
-            value: "{{ .MergeRequest.IID }}"
-      # Generic ingress patch - works for any service
-      - target:
-          kind: Ingress
-        patch: |
-          - op: replace
-            path: /metadata/name
-            value: "{{ .Repository.Name }}-mr-{{ .MergeRequest.IID }}"
-          - op: replace
-            path: /spec/rules/0/host
-            value: "mr-{{ .MergeRequest.IID }}.{{ .Repository.Name }}.dev"
-          - op: replace
-            path: /spec/rules/0/http/paths/0/backend/service/name
-            value: "{{ .Repository.Name }}-mr-{{ .MergeRequest.IID }}"
-          - op: replace
-            path: /spec/tls/0/hosts/0
-            value: "mr-{{ .MergeRequest.IID }}.{{ .Repository.Name }}.dev"
-          - op: replace
-            path: /spec/tls/0/secretName
-            value: "{{ .Repository.Name }}-mr-{{ .MergeRequest.IID }}-tls"
-          - op: add
-            path: /metadata/labels/preview.flux.dev~1enabled
-            value: "true"
-          - op: add
-            path: /metadata/labels/preview.flux.dev~1project
-            value: "{{ .Repository.Name }}"
-          - op: add
-            path: /metadata/labels/preview.flux.dev~1merge-request
-            value: "{{ .MergeRequest.IID }}"
-      dependsOn:
-      - name: flux-system
-
-  # Cleanup policy
-  cleanup:
-    onMergeRequestClosed: true
-    onMergeRequestMerged: true
-    retentionPolicy:
-      # Keep preview environments for 7 days after MR is closed/merged
-      keepFor: 168h
+    - apiVersion: kustomize.toolkit.fluxcd.io/v1
+      kind: Kustomization
+      metadata:
+        name: "banterbus-mr-<< inputs.id >>"
+        namespace: "<< inputs.namespace >>"
+        annotations:
+          event.toolkit.fluxcd.io/preview-url: "https://mr-<< inputs.id >>.banterbus.<< inputs.domain >>"
+          event.toolkit.fluxcd.io/branch: "<< inputs.branch >>"
+          event.toolkit.fluxcd.io/author: "<< inputs.author >>"
+          preview.flux.dev/source-branch: "<< inputs.branch >>"
+          preview.flux.dev/target-branch: "<< inputs.target_branch >>"
+          preview.flux.dev/gitlab-url: "<< inputs.web_url >>"
+        labels:
+          preview.flux.dev/enabled: "true"
+          preview.flux.dev/project: "<< inputs.project_name >>"
+          preview.flux.dev/merge-request: "<< inputs.id >>"
+      spec:
+        interval: 10m
+        path: "./infra/k8s/overlays/preview"
+        prune: true
+        sourceRef:
+          kind: GitRepository
+          name: "banterbus-mr-<< inputs.id >>"
+          namespace: flux-system
+        patches:
+          - patch: |
+              - op: replace
+                path: /spec/template/spec/containers/0/image
+                value: "<< inputs.image >>:<< inputs.sha >>"
+            target:
+              kind: Deployment
+              name: banterbus
+          - patch: |
+              - op: replace
+                path: /spec/rules/0/host
+                value: "mr-<< inputs.id >>.banterbus.<< inputs.domain >>"
+              - op: replace
+                path: /spec/tls/0/hosts/0
+                value: "mr-<< inputs.id >>.banterbus.<< inputs.domain >>"
+              - op: replace
+                path: /spec/tls/0/secretName
+                value: "banterbus-mr-<< inputs.id >>-tls"
+            target:
+              kind: Ingress
+              name: banterbus

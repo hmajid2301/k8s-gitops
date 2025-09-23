@@ -89,4 +89,4 @@ Create a terraform service account.
 
 - bugsink to use postgres
 
-sudo -u postgres pg_upgrade -b "$(nix build --no-link --print-out-paths nixpkgs#postgresql_16.out)/bin" -B /run/current-system/sw/bin -d /var/lib/postgresql/16 -D /var/lib/postgresql/17
+- kubernetes_secret.gitlab_api_token created in terraform get it to use openbao having issues with `VaultStaticSecret`.

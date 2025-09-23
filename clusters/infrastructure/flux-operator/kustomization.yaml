@@ -4,4 +4,5 @@ kind: Kustomization
 resources:
   - helm-repository.yaml
   - helm-release.yaml
+  - flux-instance.yaml
   - webhook-ingress.yaml

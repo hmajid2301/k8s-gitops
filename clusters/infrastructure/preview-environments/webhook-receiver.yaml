@@ -1,0 +1,14 @@
+---
+apiVersion: notification.toolkit.fluxcd.io/v1
+kind: Receiver
+metadata:
+  name: gitlab-webhook
+  namespace: flux-system
+spec:
+  type: gitlab
+  secretRef:
+    name: gitlab-api-token
+  resources:
+    - apiVersion: fluxcd.controlplane.io/v1
+      kind: ResourceSetInputProvider
+      name: banterbus-merge-requests

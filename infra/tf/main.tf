@@ -34,6 +34,10 @@
       source  = "hashicorp/random"
       version = "~> 3.6.0"
     }
+    kubernetes = {
+      source  = "hashicorp/kubernetes"
+      version = "~> 2.32"
+    }
   }
 }
 
@@ -79,6 +83,11 @@ provider "postgresql" {
   sslmode         = "disable"
   connect_timeout = 15
   superuser       = true
+}
+
+# Configure the Kubernetes Provider
+provider "kubernetes" {
+  config_path = "~/.kube/config"
 }
 
 # ==========================================

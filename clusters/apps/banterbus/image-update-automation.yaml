@@ -17,14 +17,14 @@ spec:
         email: flux@flux.io
         name: flux
       messageTemplate: |
-        Automated image update
+        🚀 banterbus: Automated image update
 
-        Files:
+        📦 Files updated:
         {{ range $filename, $_ := .Changed.FileChanges -}}
         - {{ $filename }}
         {{ end -}}
 
-        Images:
+        🔄 Image changes:
         {{ range $resource, $changes := .Changed.Objects -}}
         {{ range $_, $change := $changes -}}
         - {{ $change.OldValue }} -> {{ $change.NewValue }}

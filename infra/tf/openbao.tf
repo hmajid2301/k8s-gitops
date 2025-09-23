@@ -120,47 +120,8 @@ resource "vault_kv_secret_v2" "gitlab" {
   data_json = jsonencode({
     # You need to manually set this in GitLab with api, read_repository scopes
     token = var.gitlab_token
+    username = var.gitlab_username
+    password = var.gitlab_token
     webhook_token = random_password.gitlab_webhook_token.result
   })
-}
-
-# Create OpenBao policy for GitLab access (used by flux-system)
-resource "vault_policy" "gitlab" {
-  name = "gitlab"
-
-  policy = <<EOT
-# Allow read access to gitlab secrets for preview environments
-path "kv/data/apps/gitlab" {
-  capabilities = ["read"]
-}
-
-path "kv/metadata/apps/gitlab" {
-  capabilities = ["read", "list"]
-}
-EOT
-}
-
-# Create combined policy for flux-system namespace
-resource "vault_policy" "flux_system" {
-  name = "flux-system"
-
-  policy = <<EOT
-# Allow read access to gitlab secrets for preview environments
-path "kv/data/apps/gitlab" {
-  capabilities = ["read"]
-}
-
-path "kv/metadata/apps/gitlab" {
-  capabilities = ["read", "list"]
-}
-
-# Allow read access to bugsink secrets if needed
-path "kv/data/apps/bugsink" {
-  capabilities = ["read"]
-}
-
-path "kv/metadata/apps/bugsink" {
-  capabilities = ["read", "list"]
-}
-EOT
 }

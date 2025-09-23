@@ -1,0 +1,20 @@
+---
+apiVersion: fluxcd.controlplane.io/v1
+kind: ResourceSetInputProvider
+metadata:
+  name: banterbus-merge-requests
+  namespace: flux-system
+  annotations:
+    fluxcd.controlplane.io/reconcileEvery: "5m"
+spec:
+  type: GitLabMergeRequest
+  url: https://gitlab.com/hmajid2301/k8s-gitops
+  secretRef:
+    name: gitlab-api-token
+  filter:
+    labels:
+      - "deploy/flux-preview"
+  defaultValues:
+    domain: "homelab.haseebmajid.dev"
+    namespace: "dev"
+    image: "registry.gitlab.com/haseebmajid/banterbus"

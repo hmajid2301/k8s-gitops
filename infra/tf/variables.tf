@@ -4,6 +4,11 @@ variable "gitlab_token" {
   sensitive   = true
 }
 
+variable "gitlab_username" {
+  description = "GitLab username for API authentication"
+  type        = string
+}
+
 variable "gitlab_project" {
   description = "The GitLab project path (e.g., 'username/repo-name')"
   type        = string

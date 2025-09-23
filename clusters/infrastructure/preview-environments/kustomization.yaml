@@ -4,4 +4,7 @@ kind: Kustomization
 resources:
   - flux-system-rbac.yaml
   - gitlab-api-secret.yaml
+  - resourceset-input-provider.yaml
   - resourceset.yaml
+  - webhook-receiver.yaml
+  - webhook-ingress.yaml

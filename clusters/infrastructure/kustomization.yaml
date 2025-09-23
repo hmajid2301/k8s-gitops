@@ -13,3 +13,4 @@ resources:
   - mirrord
   - openbao
   - tailscale
+  - preview-environments
