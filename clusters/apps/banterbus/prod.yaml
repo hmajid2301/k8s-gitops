@@ -14,7 +14,7 @@ spec:
   images:
     - name: registry.gitlab.com/hmajid2301/banterbus
       # {"$imagepolicy": "flux-system:banterbus-prod:name"}
-      newTag: prod-6adff8cfa8ec18e33de1975a9485d465f9e46526-1758652944 # {"$imagepolicy": "flux-system:banterbus-prod:tag"}
+      newTag: prod-3ab80e0299f71dc5e41196dd34fe9f68c1ba04bf-1758790493 # {"$imagepolicy": "flux-system:banterbus-prod:tag"}
   healthChecks:
     - apiVersion: apps/v1
       kind: Deployment
