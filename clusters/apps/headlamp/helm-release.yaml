@@ -38,11 +38,10 @@ spec:
         cpu: 100m
         memory: 128Mi
 
-    # Service configuration - NodePort for host access
+    # Service configuration - ClusterIP for ingress access
     service:
-      type: NodePort
+      type: ClusterIP
       port: 80
-      nodePort: 30080
 
     # Enable persistence for plugins
     persistence:

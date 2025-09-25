@@ -1,0 +1,25 @@
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: flux-webhook-ingress
+  namespace: flux-system
+  annotations:
+    traefik.ingress.kubernetes.io/tls.certresolver: letsencrypt
+spec:
+  ingressClassName: traefik
+  rules:
+  - host: flux-webhook.homelab.haseebmajid.dev
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: webhook-receiver
+            port:
+              number: 80
+  tls:
+  - hosts:
+    - flux-webhook.homelab.haseebmajid.dev
+    secretName: flux-webhook-ingress-tls
