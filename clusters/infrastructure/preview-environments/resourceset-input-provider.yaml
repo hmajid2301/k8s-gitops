@@ -17,4 +17,4 @@ spec:
   defaultValues:
     domain: "homelab.haseebmajid.dev"
     namespace: "dev"
-    image: "registry.gitlab.com/haseebmajid/banterbus"
+    image: "registry.gitlab.com/hmajid2301/banterbus"

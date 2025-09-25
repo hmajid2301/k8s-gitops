@@ -18,7 +18,7 @@ spec:
         namespace: flux-system
         labels:
           preview.flux.dev/enabled: "true"
-          preview.flux.dev/project: "<< inputs.project_name >>"
+          preview.flux.dev/project: "banterbus"
           preview.flux.dev/merge-request: "<< inputs.id >>"
       spec:
         interval: 1m
@@ -41,7 +41,7 @@ spec:
           preview.flux.dev/gitlab-url: "<< inputs.web_url >>"
         labels:
           preview.flux.dev/enabled: "true"
-          preview.flux.dev/project: "<< inputs.project_name >>"
+          preview.flux.dev/project: "banterbus"
           preview.flux.dev/merge-request: "<< inputs.id >>"
       spec:
         interval: 10m
