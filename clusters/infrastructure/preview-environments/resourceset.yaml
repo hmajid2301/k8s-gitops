@@ -33,7 +33,7 @@ spec:
         name: "banterbus-mr-<< inputs.id >>"
         namespace: "<< inputs.namespace >>"
         annotations:
-          event.toolkit.fluxcd.io/preview-url: "https://mr-<< inputs.id >>.banterbus.<< inputs.domain >>"
+          event.toolkit.fluxcd.io/preview-url: "https://mr-<< inputs.id >>.dev.banterbus.<< inputs.domain >>"
           event.toolkit.fluxcd.io/branch: "<< inputs.branch >>"
           event.toolkit.fluxcd.io/author: "<< inputs.author >>"
           preview.flux.dev/source-branch: "<< inputs.branch >>"
@@ -62,10 +62,10 @@ spec:
           - patch: |
               - op: replace
                 path: /spec/rules/0/host
-                value: "mr-<< inputs.id >>.banterbus.<< inputs.domain >>"
+                value: "mr-<< inputs.id >>.dev.banterbus.<< inputs.domain >>"
               - op: replace
                 path: /spec/tls/0/hosts/0
-                value: "mr-<< inputs.id >>.banterbus.<< inputs.domain >>"
+                value: "mr-<< inputs.id >>.dev.banterbus.<< inputs.domain >>"
               - op: replace
                 path: /spec/tls/0/secretName
                 value: "banterbus-mr-<< inputs.id >>-tls"
