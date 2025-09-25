@@ -14,3 +14,4 @@ resources:
   - openbao
   - tailscale
   - preview-environments
+  - traefik

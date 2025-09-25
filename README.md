@@ -90,3 +90,16 @@ Create a terraform service account.
 - bugsink to use postgres
 
 - kubernetes_secret.gitlab_api_token created in terraform get it to use openbao having issues with `VaultStaticSecret`.
+
+- traefik token and cert in nixicle
+
+```bash
+# Get the token
+kubectl get secret traefik-token -n kube-system -o jsonpath='{.data.token}' | base64 -d
+
+# Get the CA certificate
+kubectl get secret traefik-token -n kube-system -o jsonpath='{.data.ca\.crt}' | base64 -d
+
+# Get the server URL
+kubectl config view --minify -o jsonpath='{.clusters[0].cluster.server}'
+```

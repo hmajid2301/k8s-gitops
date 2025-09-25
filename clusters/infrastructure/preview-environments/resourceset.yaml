@@ -22,7 +22,7 @@ spec:
           preview.flux.dev/merge-request: "<< inputs.id >>"
       spec:
         interval: 1m
-        url: "<< inputs.clone_url >>"
+        url: "https://gitlab.com/hmajid2301/banterbus.git"
         ref:
           branch: "<< inputs.branch >>"
         timeout: 60s
@@ -33,12 +33,12 @@ spec:
         name: "banterbus-mr-<< inputs.id >>"
         namespace: "<< inputs.namespace >>"
         annotations:
-          event.toolkit.fluxcd.io/preview-url: "https://mr-<< inputs.id >>.dev.banterbus.<< inputs.domain >>"
+          event.toolkit.fluxcd.io/preview-url: "https://mr-<< inputs.id >>.<< inputs.domain >>"
           event.toolkit.fluxcd.io/branch: "<< inputs.branch >>"
           event.toolkit.fluxcd.io/author: "<< inputs.author >>"
           preview.flux.dev/source-branch: "<< inputs.branch >>"
-          preview.flux.dev/target-branch: "<< inputs.target_branch >>"
-          preview.flux.dev/gitlab-url: "<< inputs.web_url >>"
+          preview.flux.dev/target-branch: "main"
+          preview.flux.dev/gitlab-url: "https://gitlab.com/hmajid2301/banterbus/-/merge_requests/<< inputs.id >>"
         labels:
           preview.flux.dev/enabled: "true"
           preview.flux.dev/project: "banterbus"
@@ -69,6 +69,12 @@ spec:
               - op: replace
                 path: /spec/tls/0/secretName
                 value: "banterbus-mr-<< inputs.id >>-tls"
+              - op: replace
+                path: /metadata/annotations/cert-manager.io~1cluster-issuer
+                value: ""
+              - op: add
+                path: /metadata/annotations/traefik.ingress.kubernetes.io~1tls.certresolver
+                value: "letsencrypt"
             target:
               kind: Ingress
               name: banterbus

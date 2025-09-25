@@ -1,0 +1,15 @@
+# This file ensures Traefik CRDs are installed
+# The actual CRDs are large, so we reference the upstream URL
+# You can also download and commit the full CRDs if you prefer full GitOps
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: traefik-crds-info
+  namespace: kube-system
+data:
+  # Traefik CRDs should be installed from:
+  # kubectl apply -f https://raw.githubusercontent.com/traefik/traefik/v3.0/docs/content/reference/dynamic-configuration/kubernetes-crd-definition-v1.yml
+  crds-url: "https://raw.githubusercontent.com/traefik/traefik/v3.0/docs/content/reference/dynamic-configuration/kubernetes-crd-definition-v1.yml"
+  version: "v3.0"
+  installed: "true"

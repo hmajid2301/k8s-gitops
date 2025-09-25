@@ -15,6 +15,6 @@ spec:
     labels:
       - "deploy/flux-preview"
   defaultValues:
-    domain: "homelab.haseebmajid.dev"
+    domain: "dev.banterbus.games"
     namespace: "dev"
     image: "registry.gitlab.com/hmajid2301/banterbus"
