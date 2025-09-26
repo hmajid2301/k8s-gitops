@@ -14,11 +14,24 @@ spec:
   images:
     - name: registry.gitlab.com/hmajid2301/banterbus
       # {"$imagepolicy": "flux-system:banterbus-dev:name"}
-      newTag: dev-b8b8a87c1711dc4edf00205f3febbddfabc59be0-1758837277 # {"$imagepolicy": "flux-system:banterbus-dev:tag"}
+      # {"$imagepolicy": "flux-system:banterbus-dev:tag"}
+      newTag: dev-b8b8a87c1711dc4edf00205f3febbddfabc59be0-1758837277
   healthChecks:
     - apiVersion: apps/v1
       kind: Deployment
       name: banterbus
       namespace: dev
+  patches:
+    - patch: |
+        - op: remove
+          path: /metadata/annotations/cert-manager.io~1cluster-issuer
+        - op: add
+          path: /metadata/annotations/traefik.ingress.kubernetes.io~1tls.certresolver
+          value: "letsencrypt"
+        - op: remove
+          path: /spec/tls/0/secretName
+      target:
+        kind: Ingress
+        name: banterbus
   dependsOn:
     - name: flux-system

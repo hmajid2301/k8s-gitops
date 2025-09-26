@@ -20,5 +20,17 @@ spec:
       kind: Deployment
       name: banterbus
       namespace: prod
+  patches:
+    - patch: |
+        - op: remove
+          path: /metadata/annotations/cert-manager.io~1cluster-issuer
+        - op: add
+          path: /metadata/annotations/traefik.ingress.kubernetes.io~1tls.certresolver
+          value: "letsencrypt"
+        - op: remove
+          path: /spec/tls/0/secretName
+      target:
+        kind: Ingress
+        name: banterbus
   dependsOn:
     - name: flux-system
