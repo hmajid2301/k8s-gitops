@@ -15,3 +15,4 @@ resources:
   - tailscale
   - preview-environments
   - traefik
+  - flagger
