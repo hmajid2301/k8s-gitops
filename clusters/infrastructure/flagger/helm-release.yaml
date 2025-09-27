@@ -26,15 +26,29 @@ spec:
     keepHistory: false
   values:
     meshProvider: traefik
-    metricsServer: http://kube-prometheus-stack-prometheus.monitoring.svc.cluster.local:9090
+
+    # Logging configuration - JSON for OTEL collector
+    logLevel: info
+
+    # Enable Prometheus metrics endpoint for scraping
+    prometheus:
+      install: false
+
+    # Pod annotations for log forwarding
+    podAnnotations:
+      fluentbit.io/parser: "json"
+      fluentbit.io/exclude: "false"
+
     slack:
       url: ""
       channel: ""
       username: flagger
     msteams:
       url: ""
+
     leaderElection:
       enabled: true
+
     resources:
       limits:
         memory: "512Mi"
