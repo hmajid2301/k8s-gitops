@@ -21,7 +21,7 @@ spec:
   - host: flux-webhook.homelab.haseebmajid.dev
     http:
       paths:
-      - path: /webhook
+      - path: /hook
         pathType: Prefix
         backend:
           service:
