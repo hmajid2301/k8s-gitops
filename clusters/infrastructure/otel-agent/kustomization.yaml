@@ -7,5 +7,4 @@ resources:
   - rbac.yaml
   - kube-state-metrics.yaml
   - otel-agent.yaml
-  - service.yaml
   - fluent-bit.yaml
