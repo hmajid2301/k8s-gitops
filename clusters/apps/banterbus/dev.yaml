@@ -13,7 +13,7 @@ spec:
   path: ./infra/k8s/overlays/dev
   images:
     - name: registry.gitlab.com/hmajid2301/banterbus # {"$imagepolicy": "flux-system:banterbus-dev:name"}
-      newTag: dev-eb6b2d8b76d0629679e5cbe54a3184b7a88a6b43-1759746138 # {"$imagepolicy": "flux-system:banterbus-dev:tag"}
+      newTag: dev-46ca575dad983e44671da05988ec53298fa7602b-1760478205 # {"$imagepolicy": "flux-system:banterbus-dev:tag"}
   healthChecks:
     - apiVersion: apps/v1
       kind: Deployment
