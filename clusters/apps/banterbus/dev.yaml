@@ -12,8 +12,10 @@ spec:
   targetNamespace: dev
   path: ./infra/k8s/overlays/dev
   images:
-    - name: registry.gitlab.com/hmajid2301/banterbus # {"$imagepolicy": "flux-system:banterbus-dev:name"}
-      newTag: dev-0ddae232a46c229d15f47b206da7d4e52546de99-1761428929 # {"$imagepolicy": "flux-system:banterbus-dev:tag"}
+    - name: registry.gitlab.com/hmajid2301/banterbus
+      # {"$imagepolicy": "flux-system:banterbus-dev:name"}
+      newTag: dev-0ddae232a46c229d15f47b206da7d4e52546de99-1761428929
+      # {"$imagepolicy": "flux-system:banterbus-dev:tag"}
   healthChecks:
     - apiVersion: apps/v1
       kind: Deployment
@@ -30,6 +32,14 @@ spec:
           path: /spec/tls/0/secretName
       target:
         kind: Ingress
+        name: banterbus
+    - patch: |
+        - op: replace
+          path: /spec/template/spec/nodeSelector
+          value:
+            node-role.kubernetes.io/control-plane: "true"
+      target:
+        kind: Deployment
         name: banterbus
   dependsOn:
     - name: flux-system
