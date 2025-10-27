@@ -4,8 +4,6 @@ kind: Kustomization
 namespace: cloudflare-tunnel
 resources:
   - namespace.yaml
-  - vault-creds-secret.yaml
-  - vault-secret.yaml
   - vault-credentials-secret.yaml
   - configmap.yaml
   - network-policy.yaml
