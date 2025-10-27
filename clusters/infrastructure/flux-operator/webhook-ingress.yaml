@@ -14,24 +14,17 @@ metadata:
 spec:
   ingressClassName: traefik
   tls:
-  - hosts:
-    - flux-webhook.homelab.haseebmajid.dev
-    secretName: flux-webhook-tls
+    - hosts:
+        - flux-operator.homelab.haseebmajid.dev
+      secretName: flux-operator-webhook-tls
   rules:
-  - host: flux-webhook.homelab.haseebmajid.dev
-    http:
-      paths:
-      - path: /hook
-        pathType: Prefix
-        backend:
-          service:
-            name: flux-operator-webhook
-            port:
-              number: 9443
-      - path: /
-        pathType: Prefix
-        backend:
-          service:
-            name: flux-operator-webhook
-            port:
-              number: 9443
+    - host: flux-operator.homelab.haseebmajid.dev
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: flux-operator-webhook
+                port:
+                  number: 9443

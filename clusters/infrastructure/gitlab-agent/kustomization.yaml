@@ -7,5 +7,6 @@ namespace: gitlab-agent-k8s
 resources:
   - namespace.yaml
   - helm-repository.yaml
+  - vault-auth.yaml
   - vault-secret.yaml
   - helm-release.yaml

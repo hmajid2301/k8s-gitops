@@ -38,6 +38,9 @@ spec:
           path: /spec/template/spec/nodeSelector
           value:
             node-role.kubernetes.io/control-plane: "true"
+        - op: replace
+          path: /spec/replicas
+          value: 1
       target:
         kind: Deployment
         name: banterbus

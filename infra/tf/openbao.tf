@@ -157,3 +157,53 @@ resource "kubernetes_cluster_role_binding" "openbao_auth" {
   }
 }
 
+# Create OpenBao policy for GitLab agent access
+resource "vault_policy" "gitlab_agent" {
+  name = "gitlab-agent"
+
+  policy = <<EOT
+# Allow read access to GitLab secrets
+path "kv/data/infra/gitlab" {
+  capabilities = ["read"]
+}
+
+path "kv/metadata/infra/gitlab" {
+  capabilities = ["read", "list"]
+}
+EOT
+}
+
+# Get the service account token for Kubernetes auth
+data "kubernetes_secret" "openbao_auth_token" {
+  metadata {
+    name      = kubernetes_service_account.openbao_auth.default_secret_name
+    namespace = kubernetes_service_account.openbao_auth.metadata[0].namespace
+  }
+
+  depends_on = [kubernetes_service_account.openbao_auth]
+}
+
+# Configure Kubernetes auth backend
+resource "vault_kubernetes_auth_backend_config" "k8s" {
+  backend            = vault_auth_backend.kubernetes.path
+  kubernetes_host    = "https://vps:6443"
+  kubernetes_ca_cert = data.kubernetes_secret.openbao_auth_token.data["ca.crt"]
+  token_reviewer_jwt = data.kubernetes_secret.openbao_auth_token.data["token"]
+}
+
+# Create Kubernetes auth role for k8s services
+resource "vault_kubernetes_auth_backend_role" "k8s_auth_role" {
+  backend                          = vault_auth_backend.kubernetes.path
+  role_name                        = "k8s-auth-role"
+  bound_service_account_names      = ["cloudflare-tunnel", "bugsink", "gitlab-agent"]
+  bound_service_account_namespaces = ["cloudflare-tunnel", "prod", "gitlab-agent-k8s"]
+  token_ttl                        = 3600
+  token_policies                   = ["cloudflare-tunnel", "bugsink", "gitlab-agent"]
+
+  depends_on = [
+    vault_kubernetes_auth_backend_config.k8s,
+    vault_policy.cloudflare_tunnel,
+    vault_policy.bugsink,
+    vault_policy.gitlab_agent
+  ]
+}
