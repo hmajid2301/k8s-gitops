@@ -76,3 +76,8 @@ variable "postgres_password" {
   type        = string
   sensitive   = true
 }
+
+variable "kubernetes_host" {
+  description = "Kubernetes API server host (external URL since OpenBao runs outside the cluster)"
+  type        = string
+}

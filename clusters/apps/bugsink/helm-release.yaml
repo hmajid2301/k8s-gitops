@@ -74,38 +74,10 @@ spec:
     postgresql:
       enabled: false
 
-    # Pod security context - run as root for SQLite write permissions
-    securityContext:
-      runAsNonRoot: false
-      runAsUser: 0
-      fsGroup: 0
-
-    # Container security context
-    containerSecurityContext:
-      runAsUser: 0
-
-    # Init containers for snappea database initialization
-    initContainers:
-      - name: snappea-init
-        image: bugsink/bugsink:latest
-        command: ["/bin/bash", "-c", "bugsink-manage migrate --database=snappea"]
-        envFrom:
-          - secretRef:
-              name: bugsink
-          - configMapRef:
-              name: bugsink
-        volumeMounts:
-          - name: tmp-data
-            mountPath: /tmp
-
-    # Add volumes for writable SQLite databases
-    extraVolumes:
-      - name: tmp-data
-        emptyDir: {}
-
-    extraVolumeMounts:
-      - name: tmp-data
-        mountPath: /tmp
+    # Use external PostgreSQL database
+    externalDatabase:
+      existingSecret: bugsink-secrets
+      existingSecretKey: database_url
 
     # Autoscaling
     autoscaling:

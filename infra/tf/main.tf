@@ -97,4 +97,5 @@ provider "kubernetes" {
 resource "flux_bootstrap_git" "this" {
   embedded_manifests = true
   path               = "clusters"
+  components_extra   = ["image-reflector-controller", "image-automation-controller"]
 }

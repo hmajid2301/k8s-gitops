@@ -89,6 +89,8 @@ Create a terraform service account.
 
 - bugsink to use postgres
 
+- Migrate to use quic2 for tunnel
+
 - kubernetes_secret.gitlab_api_token created in terraform get it to use openbao having issues with `VaultStaticSecret`.
 
 - traefik token and cert in nixicle

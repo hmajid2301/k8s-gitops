@@ -20,3 +20,7 @@ cloudflare_account_id = ""
 # OpenBao Configuration
 openbao_address = "https://openbao.homelab.haseebmajid.dev"
 openbao_token = ""
+
+# Kubernetes Configuration
+# External Kubernetes API URL (accessible from OpenBao which runs outside the cluster)
+kubernetes_host = "https://your-k8s-api-server:6443"

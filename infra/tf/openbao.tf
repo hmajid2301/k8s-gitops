@@ -50,13 +50,13 @@ resource "postgresql_database" "bugsink" {
 
 # Create PostgreSQL role for Bugsink
 resource "postgresql_role" "bugsink" {
-  provider         = postgresql.homelab
-  name             = "bugsink"
-  login            = true
-  password         = random_password.bugsink_db_password.result
-  create_database  = true
-  create_role      = false
-  superuser        = false
+  provider        = postgresql.homelab
+  name            = "bugsink"
+  login           = true
+  password        = random_password.bugsink_db_password.result
+  create_database = true
+  create_role     = false
+  superuser       = false
 }
 
 # Store Bugsink secrets in OpenBao
@@ -67,15 +67,15 @@ resource "vault_kv_secret_v2" "bugsink" {
   delete_all_versions = true
 
   data_json = jsonencode({
-    secret_key         = random_password.bugsink_secret_key.result
-    admin_user         = "admin"
-    admin_pass         = "admin"
-    database_url       = "postgresql://${postgresql_role.bugsink.name}:${random_password.bugsink_db_password.result}@${var.postgres_host}:${var.postgres_port}/${postgresql_database.bugsink.name}?sslmode=disable"
-    db_user           = postgresql_role.bugsink.name
-    db_password       = random_password.bugsink_db_password.result
-    db_name           = postgresql_database.bugsink.name
-    db_host           = var.postgres_host
-    db_port           = var.postgres_port
+    secret_key   = random_password.bugsink_secret_key.result
+    admin_user   = "admin"
+    admin_pass   = "admin"
+    database_url = "postgresql://${postgresql_role.bugsink.name}:${random_password.bugsink_db_password.result}@${var.postgres_host}:${var.postgres_port}/${postgresql_database.bugsink.name}?sslmode=disable"
+    db_user      = postgresql_role.bugsink.name
+    db_password  = random_password.bugsink_db_password.result
+    db_name      = postgresql_database.bugsink.name
+    db_host      = var.postgres_host
+    db_port      = var.postgres_port
   })
 
   depends_on = [
@@ -119,9 +119,41 @@ resource "vault_kv_secret_v2" "gitlab" {
 
   data_json = jsonencode({
     # You need to manually set this in GitLab with api, read_repository scopes
-    token = var.gitlab_token
-    username = var.gitlab_username
-    password = var.gitlab_token
+    token         = var.gitlab_token
+    username      = var.gitlab_username
+    password      = var.gitlab_token
     webhook_token = random_password.gitlab_webhook_token.result
   })
 }
+
+# Enable Kubernetes auth backend
+resource "vault_auth_backend" "kubernetes" {
+  type = "kubernetes"
+  path = "kubernetes"
+}
+
+# Create service account for OpenBao token review
+resource "kubernetes_service_account" "openbao_auth" {
+  metadata {
+    name      = "openbao-auth"
+    namespace = "kube-system"
+  }
+}
+
+# Create ClusterRoleBinding for token review
+resource "kubernetes_cluster_role_binding" "openbao_auth" {
+  metadata {
+    name = "openbao-auth-delegator"
+  }
+  role_ref {
+    api_group = "rbac.authorization.k8s.io"
+    kind      = "ClusterRole"
+    name      = "system:auth-delegator"
+  }
+  subject {
+    kind      = "ServiceAccount"
+    name      = kubernetes_service_account.openbao_auth.metadata[0].name
+    namespace = kubernetes_service_account.openbao_auth.metadata[0].namespace
+  }
+}
+
