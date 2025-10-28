@@ -1,4 +1,4 @@
 env:
 - name: BANTERBUS_IMAGE_TAG
   # {"$imagepolicy": "flux-system:banterbus-dev:tag"}
-  value: "dev-88842cf335fff0ab9802379f371d4d7ef09f59ab-1761690915" # {"$imagepolicy": "flux-system:banterbus-dev:tag"}
+  value: "dev-4faeb3c479080bca2bb89bf4af575b2ea603b83a-1761692421" # {"$imagepolicy": "flux-system:banterbus-dev:tag"}
