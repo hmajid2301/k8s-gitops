@@ -1,10 +1,9 @@
 ---
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
-
 resources:
-- serviceaccount.yaml
-- rbac.yaml
-- token-secret.yaml
-- crds.yaml
-- ingressclass.yaml
+  - crds.yaml
+  - ingressclass.yaml
+  - serviceaccount.yaml
+  - rbac.yaml
+  - token-secret.yaml
