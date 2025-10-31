@@ -7,7 +7,8 @@ spec:
   type: gitlab
   events:
     - "ping"
-    - "push"
+    - "Push Hook"
+    - "Merge Request Hook"
   secretRef:
     name: gitlab-api-token
   resources:
